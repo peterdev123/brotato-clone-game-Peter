@@ -60,13 +60,20 @@ public class Player{
             character.setY(y -= Gdx.graphics.getDeltaTime() * speed);
         }
 
+        float centerX = Gdx.graphics.getWidth() / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f;
+
+        // Calculate the position to draw the player sprite
+        float playerDrawX = centerX - 158 / 2f;
+        float playerDrawY = centerY - 158 / 2f;
+
         spriteBatch.begin();
         if(currentFrame != null){
-            spriteBatch.draw(currentFrame, 800, 500, 158, 158);
+            spriteBatch.draw(currentFrame, playerDrawX, playerDrawY, 158, 158);
         }
         else{
             TextureRegion idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
-            spriteBatch.draw(idles, 800, 500, 158, 158);
+            spriteBatch.draw(idles, playerDrawX, playerDrawY, 158, 158);
         }
         spriteBatch.end();
     }
