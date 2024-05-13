@@ -1,0 +1,63 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Map/map-exported.tmx",
+    "expandedProjectPaths": [
+        ".",
+        "tilesets",
+        "Map"
+    ],
+    "fileStates": {
+        "Map/map-exported.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 327.75,
+                "y": 232
+            }
+        },
+        "Map/map.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 297,
+                "y": 199.75
+            }
+        },
+        "tilesets/tiles.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 4,
+            "scaleInEditor": 2
+        }
+    },
+    "last.exportedFilePath": "C:/Users/POX/Desktop/brotato/Map",
+    "last.imagePath": "C:/Users/POX/Desktop/textures",
+    "map.height": 20,
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 30,
+    "openFiles": [
+        "tilesets/tiles.tsx",
+        "Map/map.tmx",
+        "Map/map-exported.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "tilesets/tiles.tsx",
+        "Map/map.tmx",
+        "Map/map-exported.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.type": 0
+}
