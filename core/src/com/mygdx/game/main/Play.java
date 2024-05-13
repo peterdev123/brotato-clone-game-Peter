@@ -3,12 +3,18 @@ package com.mygdx.game.main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.player.Player;
 
 public class Play implements Screen {
@@ -32,8 +38,8 @@ public class Play implements Screen {
     public void show(){
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.zoom = .2f;
-        player.character.setPosition(300, 200);
+        camera.zoom = .3f;
+        player.character.setPosition(280, 200);
         camera.position.set(player.character.getX(), player.character.getY(), 0);
 
 
@@ -43,9 +49,7 @@ public class Play implements Screen {
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        player.handleMovement(); // Handle player movement first
 
-        handleInput(delta); // Call handleInput to move the camera with WASD keys
         zoom(); // Call zoom to adjust zoom level if keys are pressed
 
         // Calculate the center position of the player
@@ -58,16 +62,17 @@ public class Play implements Screen {
         camera.update(); // Update camera after changing position
 
         // Debug output
-        System.out.println("Player position: (" + player.character.getX() + ", " + player.character.getY() + ")");
-        System.out.println("Camera position: (" + camera.position.x + ", " + camera.position.y + ")");
+//        System.out.println("Player position: (" + player.character.getX() + ", " + player.character.getY() + ")");
+//        System.out.println("Camera position: (" + camera.position.x + ", " + camera.position.y + ")");
 
         renderData(); // Render the map and playeryer
     }
 
     public void renderData(){
         renderer.setView(camera);
-        renderer.render();
-        player.handleMovement();
+        renderer.render(new int[] {0, 1});
+        player.handleMovement(camera);
+        renderer.render(new int[] {2});
     }
 
     public void handleInput(float delta) {
