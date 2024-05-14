@@ -20,7 +20,7 @@ import com.mygdx.game.utilities.Animator;
 
 public class Player{
     //Player Attributes
-    private float PLAYER_WIDTH = 28, PLAYER_HEIGHT = 28;
+    private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84;
 
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
@@ -68,10 +68,10 @@ public class Player{
         previous_y = 0;
         shapeRenderer = new ShapeRenderer();
 
-        idle = new Texture(Gdx.files.internal("animations/idle.png"));
-        run = new Texture(Gdx.files.internal("animations/run.png"));
-        idle_inverse = new Texture(Gdx.files.internal("animations/idle_inverse.png"));
-        run_inverse = new Texture(Gdx.files.internal("animations/run_inverse.png"));
+        idle = new Texture(Gdx.files.internal("animations/idle_test.png"));
+        run = new Texture(Gdx.files.internal("animations/run_test.png"));
+        idle_inverse = new Texture(Gdx.files.internal("animations/idle_inverse_test.png"));
+        run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
     }
 
     public void handleMovement(OrthographicCamera camera){
@@ -158,7 +158,7 @@ public class Player{
         spriteBatch.setProjectionMatrix(camera.combined);
 
         if(isMoving){
-            spriteBatch.draw(currentFrame, character.getX() - 10, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
+            spriteBatch.draw(currentFrame, character.getX() - 40, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
         else{
             TextureRegion idles = null;
@@ -168,7 +168,7 @@ public class Player{
             if(!isMovingLeft){
                 idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
             }
-            spriteBatch.draw(idles, character.getX() - 10, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
+            spriteBatch.draw(idles, character.getX() - 40, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
         player_bounds = new Rectangle(character.getX(), character.getY(), 5, 5);
