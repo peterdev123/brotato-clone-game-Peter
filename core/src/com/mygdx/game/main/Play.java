@@ -75,24 +75,6 @@ public class Play implements Screen {
         renderer.render(new int[] {2});
     }
 
-    public void handleInput(float delta) {
-        float moveSpeed = CAMERA_SPEED * delta; // Adjust speed based on frame time
-
-        // Move camera with WASD keys
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            camera.position.y += moveSpeed;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            camera.position.y -= moveSpeed;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.position.x -= moveSpeed;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            camera.position.x += moveSpeed;
-        }
-    }
-
     public void zoom(){
         if(Gdx.input.isKeyPressed(Input.Keys.P)){
             camera.zoom += 0.05f;

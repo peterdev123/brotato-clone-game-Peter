@@ -135,8 +135,6 @@ public class Player{
             character.setY(previous_y -= Gdx.graphics.getDeltaTime() * speed);
         }
 
-
-
         spriteBatch.begin();
         if(currentFrame != null){
             spriteBatch.draw(currentFrame, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -145,6 +143,7 @@ public class Player{
             TextureRegion idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
             spriteBatch.draw(idles, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
+
         player_bounds = new Rectangle(character.getX(), character.getY(), 5, 5);
         spriteBatch.end();
     }
