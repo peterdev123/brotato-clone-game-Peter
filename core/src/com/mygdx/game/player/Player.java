@@ -45,6 +45,8 @@ public class Player{
     //Player preloaded textures
     private Texture idle;
     private Texture run;
+    private Texture idle_inverse;
+    private Texture run_inverse;
 
     private ShapeRenderer shapeRenderer;
 
@@ -65,6 +67,8 @@ public class Player{
 
         idle = new Texture(Gdx.files.internal("animations/idle.png"));
         run = new Texture(Gdx.files.internal("animations/run.png"));
+        idle_inverse = new Texture(Gdx.files.internal("animations/idle_inverse.png"));
+        run_inverse = new Texture(Gdx.files.internal("animations/run_inverse.png"));
     }
 
     public void handleMovement(OrthographicCamera camera){
@@ -113,6 +117,7 @@ public class Player{
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             previous_x = character.getX();
             character.setX(previous_x -= Gdx.graphics.getDeltaTime() * speed);
             prev_movement = 0;
@@ -126,11 +131,23 @@ public class Player{
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            if(prev_movement == 0){
+                currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
+            }
+            if(prev_movement == 1){
+                currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
+            }
             previous_y = character.getY();
             character.setY(previous_y += Gdx.graphics.getDeltaTime() * speed);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            if(prev_movement == 0){
+                currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
+            }
+            if(prev_movement == 1){
+                currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
+            }
             previous_y = character.getY();
             character.setY(previous_y -= Gdx.graphics.getDeltaTime() * speed);
         }
@@ -140,7 +157,13 @@ public class Player{
             spriteBatch.draw(currentFrame, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
         else{
-            TextureRegion idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
+            TextureRegion idles = null;
+            if(prev_movement == 0){
+                idles = animator.animateIdle(idle_inverse).getKeyFrame(stateTime, true);
+            }
+            if(prev_movement == 1){
+                idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
+            }
             spriteBatch.draw(idles, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 

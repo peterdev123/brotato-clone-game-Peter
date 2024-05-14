@@ -56,16 +56,21 @@ public class Play implements Screen {
         float playerCenterX = player.character.getX();
         float playerCenterY = player.character.getY();
 
+
+
         // Set camera position to follow the player, adjusting for zoom level
         camera.position.set(playerCenterX, playerCenterY, 0);
 
-        camera.update(); // Update camera after changing position
+         // Update camera after changing position
 
         // Debug output
 //        System.out.println("Player position: (" + player.character.getX() + ", " + player.character.getY() + ")");
 //        System.out.println("Camera position: (" + camera.position.x + ", " + camera.position.y + ")");
 
-        renderData(); // Render the map and playeryer
+        System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
+
+        renderData();
+        camera.update();// Render the map and playeryer
     }
 
     public void renderData(){
