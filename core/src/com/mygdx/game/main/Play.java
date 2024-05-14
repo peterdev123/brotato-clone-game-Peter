@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.player.Player;
 
 public class Play implements Screen {
@@ -69,7 +70,8 @@ public class Play implements Screen {
 //        System.out.println("Player position: (" + player.character.getX() + ", " + player.character.getY() + ")");
 //        System.out.println("Camera position: (" + camera.position.x + ", " + camera.position.y + ")");
 
-        System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
+        Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        System.out.println((position.x - player.character.getX()) + " " + (position.y - player.character.getY()));
 
         renderData();
         camera.update();// Render the map and playeryer

@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.main.Map;
 import com.mygdx.game.utilities.Animator;
 
@@ -34,6 +35,7 @@ public class Player{
     private Animator animator;
     private float stateTime;
     private int speed;
+    private boolean isMoving;
     private boolean isMovingLeft;
 
     //Player Collision Attributes
@@ -57,6 +59,7 @@ public class Player{
         animator = new Animator();
         stateTime = 0f;
         speed = 55 * 2;
+        isMoving = false;
         isMovingLeft = false;
 
         collision_objects = new Map().getCollissionObjects();
@@ -116,44 +119,43 @@ public class Player{
             }
         }
 
+        isMovingLeft = checkDirectionFacing(camera);
+
         if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             previous_x = character.getX();
             character.setX(previous_x -= Gdx.graphics.getDeltaTime() * speed);
-            isMovingLeft = true;
+            isMoving = true;
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
             previous_x = character.getX();
             character.setX(previous_x += Gdx.graphics.getDeltaTime() * speed);
-            isMovingLeft = false;
+            isMoving = true;
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            if(isMovingLeft){
-                currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
-            }
-            if(!isMovingLeft){
-                currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
-            }
             previous_y = character.getY();
             character.setY(previous_y += Gdx.graphics.getDeltaTime() * speed);
+            isMoving = true;
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            previous_y = character.getY();
+            character.setY(previous_y -= Gdx.graphics.getDeltaTime() * speed);
+            isMoving = true;
+        }
+
+        if(isMoving){
             if(isMovingLeft){
                 currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             }
-            if(!isMovingLeft){
+            else{
                 currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
             }
-            previous_y = character.getY();
-            character.setY(previous_y -= Gdx.graphics.getDeltaTime() * speed);
         }
 
         spriteBatch.begin();
-        if(currentFrame != null){
+        if(isMoving){
             spriteBatch.draw(currentFrame, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
         else{
@@ -168,7 +170,13 @@ public class Player{
         }
 
         player_bounds = new Rectangle(character.getX(), character.getY(), 5, 5);
+        isMoving = false;
         spriteBatch.end();
+    }
+
+    private boolean checkDirectionFacing(OrthographicCamera camera){
+        Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        return !(position.x - character.getX() > 0);
     }
 
 
