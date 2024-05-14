@@ -34,7 +34,7 @@ public class Player{
     private Animator animator;
     private float stateTime;
     private int speed;
-    private int prev_movement;
+    private boolean isMovingLeft;
 
     //Player Collision Attributes
     private MapObjects collision_objects;
@@ -57,7 +57,7 @@ public class Player{
         animator = new Animator();
         stateTime = 0f;
         speed = 55 * 2;
-        prev_movement = 0;
+        isMovingLeft = false;
 
         collision_objects = new Map().getCollissionObjects();
         player_bounds = new Rectangle(playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -120,21 +120,21 @@ public class Player{
             currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             previous_x = character.getX();
             character.setX(previous_x -= Gdx.graphics.getDeltaTime() * speed);
-            prev_movement = 0;
+            isMovingLeft = true;
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.D)){
             currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
             previous_x = character.getX();
             character.setX(previous_x += Gdx.graphics.getDeltaTime() * speed);
-            prev_movement = 1;
+            isMovingLeft = false;
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            if(prev_movement == 0){
+            if(isMovingLeft){
                 currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             }
-            if(prev_movement == 1){
+            if(!isMovingLeft){
                 currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
             }
             previous_y = character.getY();
@@ -142,10 +142,10 @@ public class Player{
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            if(prev_movement == 0){
+            if(isMovingLeft){
                 currentFrame = animator.animateRun(run_inverse).getKeyFrame(stateTime, true);
             }
-            if(prev_movement == 1){
+            if(!isMovingLeft){
                 currentFrame = animator.animateRun(run).getKeyFrame(stateTime, true);
             }
             previous_y = character.getY();
@@ -158,10 +158,10 @@ public class Player{
         }
         else{
             TextureRegion idles = null;
-            if(prev_movement == 0){
+            if(!isMovingLeft){
                 idles = animator.animateIdle(idle_inverse).getKeyFrame(stateTime, true);
             }
-            if(prev_movement == 1){
+            if(isMovingLeft){
                 idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
             }
             spriteBatch.draw(idles, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);

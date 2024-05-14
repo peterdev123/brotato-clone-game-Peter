@@ -92,6 +92,7 @@ public class Play implements Screen {
     public void resize(int width, int height){
         camera.viewportWidth = width;
         camera.viewportHeight = height;
+        camera.zoom = 0.3f;
         camera.update();
     }
 
