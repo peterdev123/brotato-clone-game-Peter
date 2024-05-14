@@ -11,6 +11,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Title Fight");
 		config.setWindowedMode(1920, 1080);
+		config.setResizable(true);
 		new Lwjgl3Application(new TitleFight(), config);
 	}
 }

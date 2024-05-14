@@ -26,6 +26,8 @@ public class Play implements Screen {
     private Player player;
 
     private final float CAMERA_SPEED = 150.0f;
+    private final float VIRTUAL_WIDTH = 1440;  // Virtual width
+    private final float VIRTUAL_HEIGHT = 900;  // Virtual height
 
     public Play(){
         map = new Map();
@@ -90,8 +92,8 @@ public class Play implements Screen {
     }
 
     public void resize(int width, int height){
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
+        camera.viewportWidth = VIRTUAL_WIDTH;
+        camera.viewportHeight = VIRTUAL_HEIGHT;
         camera.zoom = 0.3f;
         camera.update();
     }
