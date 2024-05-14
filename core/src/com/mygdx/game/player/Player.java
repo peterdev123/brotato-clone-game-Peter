@@ -158,10 +158,10 @@ public class Player{
         }
         else{
             TextureRegion idles = null;
-            if(!isMovingLeft){
+            if(isMovingLeft){
                 idles = animator.animateIdle(idle_inverse).getKeyFrame(stateTime, true);
             }
-            if(isMovingLeft){
+            if(!isMovingLeft){
                 idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
             }
             spriteBatch.draw(idles, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
