@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.player.Player;
@@ -44,27 +45,16 @@ public class Play implements Screen {
         camera.zoom = .3f;
         player.character.setPosition(280, 200);
         camera.position.set(player.character.getX(), player.character.getY(), 0);
-
-
     }
 
     public void render(float delta){
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         zoom(); // Call zoom to adjust zoom level if keys are pressed
 
-        // Calculate the center position of the player
-        float playerCenterX = player.character.getX();
-        float playerCenterY = player.character.getY();
-
-
-
-        // Set camera position to follow the player, adjusting for zoom level
-        camera.position.set(playerCenterX, playerCenterY, 0);
-
-         // Update camera after changing position
+        //Clamps the camera to prevent out of bounds camera movement
+        clampCamera();
 
         // Debug output
 //        System.out.println("Player position: (" + player.character.getX() + ", " + player.character.getY() + ")");
@@ -74,7 +64,23 @@ public class Play implements Screen {
         System.out.println((position.x - player.character.getX()) + " " + (position.y - player.character.getY()));
 
         renderData();
-        camera.update();// Render the map and playeryer
+        camera.update();// Render the map and player
+    }
+
+    public void clampCamera(){
+        float playerCenterX = player.character.getX();
+        float playerCenterY = player.character.getY();
+
+        float cameraHalfWidth = camera.viewportWidth * camera.zoom / 2;
+        float cameraHalfHeight = camera.viewportHeight * camera.zoom / 2;
+
+        float minX = cameraHalfWidth;
+        float minY = cameraHalfHeight;
+        float maxX = map.MAP_WIDTH - cameraHalfWidth;
+        float maxY = map.MAP_HEIGHT - cameraHalfHeight;
+
+        camera.position.x = MathUtils.clamp(playerCenterX, minX, maxX);
+        camera.position.y = MathUtils.clamp(playerCenterY, minY, maxY);
     }
 
     public void renderData(){

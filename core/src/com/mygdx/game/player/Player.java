@@ -20,7 +20,7 @@ import com.mygdx.game.utilities.Animator;
 
 public class Player{
     //Player Attributes
-    private float PLAYER_WIDTH = 98, PLAYER_HEIGHT = 98;
+    private float PLAYER_WIDTH = 28, PLAYER_HEIGHT = 28;
 
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
@@ -155,8 +155,10 @@ public class Player{
         }
 
         spriteBatch.begin();
+        spriteBatch.setProjectionMatrix(camera.combined);
+
         if(isMoving){
-            spriteBatch.draw(currentFrame, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
+            spriteBatch.draw(currentFrame, character.getX() - 10, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
         else{
             TextureRegion idles = null;
@@ -166,7 +168,7 @@ public class Player{
             if(!isMovingLeft){
                 idles = animator.animateIdle(idle).getKeyFrame(stateTime, true);
             }
-            spriteBatch.draw(idles, playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
+            spriteBatch.draw(idles, character.getX() - 10, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
         player_bounds = new Rectangle(character.getX(), character.getY(), 5, 5);

@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 
 public class Map {
+    public final float MAP_WIDTH = 560, MAP_HEIGHT = 400;
+
     private TiledMap map;
 
     public Map(){
