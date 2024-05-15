@@ -55,7 +55,6 @@ public class World implements Screen {
 //        System.out.println("Camera position: (" + camera.position.x + ", " + camera.position.y + ")");
 
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        System.out.println((position.x - player.character.getX()) + " " + (position.y - player.character.getY()));
 
         renderData();
         camera.update();// Render the map and player
