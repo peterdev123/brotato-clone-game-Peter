@@ -91,7 +91,7 @@
  <objectgroup id="3" name="Collision Layer">
   <object id="9" x="69.5" y="40.4729" width="425" height="25.5"/>
   <object id="10" x="491.363" y="63.6083" width="39.5" height="295.073"/>
-  <object id="11" x="70.1803" y="329.906" width="421.823" height="26"/>
+  <object id="11" x="67.5517" y="340.476" width="427.438" height="26"/>
   <object id="13" x="49.5" y="43" width="22" height="315"/>
  </objectgroup>
 </map>

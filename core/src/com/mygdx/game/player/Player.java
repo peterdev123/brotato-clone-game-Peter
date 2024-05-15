@@ -19,15 +19,19 @@ import com.mygdx.game.main.Map;
 import com.mygdx.game.utilities.Animator;
 
 public class Player{
-    //Player Attributes
-    private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84;
-
+    //CONSTANTS
+    private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84, COLLISION_WIDTH = 5, COLLISION_HEIGHT = 5,
+                  LOS_WIDTH = 180, LOS_HEIGHT = 180;
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
 
     // Calculate the position to draw the player sprite
     private float playerDrawX = centerX - PLAYER_WIDTH / 2f;
     private float playerDrawY = centerY - PLAYER_HEIGHT / 2f;
+
+    //Player Attributes
+//    private int health;
+//    private int coins;
 
     //Player Prerequisites
     public SpriteBatch spriteBatch;
@@ -44,13 +48,18 @@ public class Player{
     private float previous_x;
     private float previous_y;
 
+    //Player Line of Sight
+    private Rectangle line_of_sight;
+
     //Player preloaded textures
     private Texture idle;
     private Texture run;
     private Texture idle_inverse;
     private Texture run_inverse;
 
-    private ShapeRenderer shapeRenderer;
+    //Debugging
+    private ShapeRenderer shapeRendererCollision;
+    private ShapeRenderer shapeRendererLOS;
 
     public Player(){
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
@@ -63,10 +72,12 @@ public class Player{
         isMovingLeft = false;
 
         collision_objects = new Map().getCollissionObjects();
-        player_bounds = new Rectangle(playerDrawX, playerDrawY, PLAYER_WIDTH, PLAYER_HEIGHT);
+        player_bounds = new Rectangle(playerDrawX, playerDrawY, COLLISION_WIDTH, COLLISION_HEIGHT);
+        line_of_sight = new Rectangle(playerDrawX, playerDrawY, LOS_WIDTH, LOS_HEIGHT);
         previous_x = 0;
         previous_y = 0;
-        shapeRenderer = new ShapeRenderer();
+        shapeRendererCollision = new ShapeRenderer();
+        shapeRendererLOS = new ShapeRenderer();
 
         idle = new Texture(Gdx.files.internal("animations/idle_test.png"));
         run = new Texture(Gdx.files.internal("animations/run_test.png"));
@@ -80,11 +91,17 @@ public class Player{
 
 
           //debugging
-//        shapeRenderer.setProjectionMatrix(camera.combined);
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//        shapeRenderer.setColor(Color.RED); // Adjust color as needed
-//        shapeRenderer.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
-//        shapeRenderer.end();
+//        shapeRendererLOS.setProjectionMatrix(camera.combined);
+//        shapeRendererLOS.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRendererLOS.setColor(Color.BLUE);
+//        shapeRendererLOS.rect(line_of_sight.x, line_of_sight.y, line_of_sight.width, line_of_sight.height);
+//        shapeRendererLOS.end();
+//
+//        shapeRendererCollision.setProjectionMatrix(camera.combined);
+//        shapeRendererCollision.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRendererCollision.setColor(Color.RED); // Adjust color as needed
+//        shapeRendererCollision.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
+//        shapeRendererCollision.end();
 
         for (MapObject object : collision_objects) {
             if (object instanceof RectangleMapObject) {
@@ -171,7 +188,12 @@ public class Player{
             spriteBatch.draw(idles, character.getX() - 40, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
-        player_bounds = new Rectangle(character.getX(), character.getY(), 5, 5);
+        //collision box
+        player_bounds = new Rectangle(character.getX(), character.getY(), COLLISION_WIDTH, COLLISION_HEIGHT);
+
+        //line of sight
+        line_of_sight = new Rectangle(character.getX() - (LOS_WIDTH / 2), character.getY() - (LOS_HEIGHT / 2), LOS_WIDTH, LOS_HEIGHT);
+
         isMoving = false;
         spriteBatch.end();
     }
@@ -180,6 +202,4 @@ public class Player{
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - character.getX() > 0);
     }
-
-
 }
