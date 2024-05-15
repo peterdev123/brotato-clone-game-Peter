@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.main.Map;
 import com.mygdx.game.utilities.Animator;
+import com.mygdx.game.weapons.Weapon;
 
 public class Player{
     //CONSTANTS
@@ -28,6 +29,8 @@ public class Player{
     // Calculate the position to draw the player sprite
     private float playerDrawX = centerX - PLAYER_WIDTH / 2f;
     private float playerDrawY = centerY - PLAYER_HEIGHT / 2f;
+
+    private Weapon weaponHandler;
 
     //Player Attributes
 //    private int health;
@@ -78,6 +81,8 @@ public class Player{
         previous_y = 0;
         shapeRendererCollision = new ShapeRenderer();
         shapeRendererLOS = new ShapeRenderer();
+
+        weaponHandler = new Weapon();
 
         idle = new Texture(Gdx.files.internal("animations/idle_test.png"));
         run = new Texture(Gdx.files.internal("animations/run_test.png"));
@@ -188,6 +193,8 @@ public class Player{
             spriteBatch.draw(idles, character.getX() - 40, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
+        drawWeapon(camera);
+
         //collision box
         player_bounds = new Rectangle(character.getX(), character.getY(), COLLISION_WIDTH, COLLISION_HEIGHT);
 
@@ -196,6 +203,51 @@ public class Player{
 
         isMoving = false;
         spriteBatch.end();
+    }
+
+    private void drawWeapon(OrthographicCamera camera) {
+        Vector3 unprojectedPosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        float weaponWidth = 30;
+        float weaponHeight = 30;
+
+        if(!checkDirectionFacing(camera)){
+            TextureRegion weapon = weaponHandler.getWeapon();
+            float characterX = character.getX() + 6;
+            float characterY = character.getY() + 15;
+
+            // Calculate the angle between the character and the target position
+            float deltaX = unprojectedPosition.x - characterX;
+            float deltaY = unprojectedPosition.y - characterY;
+
+            float angle = (float) ((float) Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+
+
+            spriteBatch.draw(weapon,
+                    characterX - weaponWidth / 2, characterY - weaponHeight / 2, // Position
+                    weaponWidth / 2, weaponHeight / 2, // Origin for rotation (center of the weapon)
+                    weaponWidth, weaponHeight, // Width and height
+                    1, 1, // Scale
+                    angle);
+        }
+        else{
+            TextureRegion weapon = weaponHandler.flippedWeapon();
+            float characterX = character.getX() - 2;
+            float characterY = character.getY() + 15;
+
+            // Calculate the angle between the character and the target position
+            float deltaX = unprojectedPosition.x - characterX;
+            float deltaY = unprojectedPosition.y - characterY;
+
+            float angle = ((float) ((float) Math.atan2(deltaY, deltaX) * 180 / Math.PI)) + 180;
+
+            spriteBatch.draw(weapon,
+                    characterX - weaponWidth / 2, characterY - weaponHeight / 2, // Position
+                    weaponWidth / 2, weaponHeight / 2, // Origin for rotation (center of the weapon)
+                    weaponWidth, weaponHeight, // Width and height
+                    1, 1, // Scale
+                    angle);
+        }
     }
 
     private boolean checkDirectionFacing(OrthographicCamera camera){
