@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.main.Map;
+import com.mygdx.game.weapons.Projectile;
 
 public class Collision {
     private MapObjects collision_objects;
@@ -48,6 +49,19 @@ public class Collision {
                 }
             }
         }
+    }
 
+    //Checks for Bullet Collision with a wall
+    public boolean bulletCollision(Rectangle projectile){
+        for (MapObject object : collision_objects) {
+            if (object instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+                // Check for collision
+                if (Intersector.overlaps(projectile, rectangle)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
