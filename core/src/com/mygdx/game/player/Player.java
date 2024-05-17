@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.main.Map;
 import com.mygdx.game.utilities.Animator;
+import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Weapon;
 
 public class Player{
@@ -46,7 +47,7 @@ public class Player{
     private boolean isMovingLeft;
 
     //Player Collision Attributes
-    private MapObjects collision_objects;
+    private Collision collision;
     private Rectangle player_bounds;
     private float previous_x;
     private float previous_y;
@@ -74,7 +75,7 @@ public class Player{
         isMoving = false;
         isMovingLeft = false;
 
-        collision_objects = new Map().getCollissionObjects();
+        collision = new Collision();
         player_bounds = new Rectangle(playerDrawX, playerDrawY, COLLISION_WIDTH, COLLISION_HEIGHT);
         line_of_sight = new Rectangle(playerDrawX, playerDrawY, LOS_WIDTH, LOS_HEIGHT);
         previous_x = 0;
@@ -108,38 +109,7 @@ public class Player{
 //        shapeRendererCollision.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
 //        shapeRendererCollision.end();
 
-        for (MapObject object : collision_objects) {
-            if (object instanceof RectangleMapObject) {
-                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
-                // Check for collision
-                if (Intersector.overlaps(player_bounds, rectangle)) {
-                    // Determine the direction of collision (left, right, top, bottom)
-                    float overlapX = Math.max(0, Math.min(player_bounds.x + player_bounds.width, rectangle.x + rectangle.width) - Math.max(player_bounds.x, rectangle.x));
-                    float overlapY = Math.max(0, Math.min(player_bounds.y + player_bounds.height, rectangle.y + rectangle.height) - Math.max(player_bounds.y, rectangle.y));
-
-                    // Adjust player's position based on the collision direction
-                    if (overlapX < overlapY) {
-                        // Horizontal collision
-                        if (player_bounds.x < rectangle.x) {
-                            // Collided from the left
-                            character.setX(rectangle.x - player_bounds.width);
-                        } else {
-                            // Collided from the right
-                            character.setX(rectangle.x + rectangle.width);
-                        }
-                    } else {
-                        // Vertical collision
-                        if (player_bounds.y < rectangle.y) {
-                            // Collided from the bottom
-                            character.setY(rectangle.y - player_bounds.height);
-                        } else {
-                            // Collided from the top
-                            character.setY(rectangle.y + rectangle.height);
-                        }
-                    }
-                }
-            }
-        }
+        collision.displayCollision(player_bounds, character);
 
         isMovingLeft = checkDirectionFacing(camera);
 
