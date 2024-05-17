@@ -34,6 +34,7 @@ public class Weapon{
         return flipped_weapon;
     }
 
+    //TODO: Make bullet disappear when hitting a wall
     public void handleWeapon(OrthographicCamera camera, SpriteBatch spriteBatch, float char_x, float char_y) {
         Vector3 unprojectedPosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -105,7 +106,7 @@ public class Weapon{
                         (weaponWidth - 20) / 2, (weaponHeight - 10) / 2, // Origin for rotation (center of the weapon)
                         20, 20, // Width and height
                         1, 1, // Scale
-                        angle);
+                        proj.angle);
             }
         }
         else{

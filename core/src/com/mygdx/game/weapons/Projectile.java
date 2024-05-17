@@ -12,7 +12,7 @@ public class Projectile{
     public final float angle;
 
     public Projectile(Vector2 position, Vector2 direction, float angle){
-        projectile_texture = new Texture(Gdx.files.internal("bullets/12.png"));
+        projectile_texture = new Texture(Gdx.files.internal("bullets/13.png"));
         this.position = position;
         this.direction = direction;
         this.angle = angle;
