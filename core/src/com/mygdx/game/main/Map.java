@@ -23,9 +23,14 @@ public class Map {
 
     public MapObjects getCollissionObjects(){
         MapLayer collisionObjectLayer = map.getLayers().get(3);
-        System.out.println(collisionObjectLayer.getObjects().getCount());
         return collisionObjectLayer.getObjects();
     }
+
+    public MapObjects getBulletCollissionObjects(){
+        MapLayer collisionObjectLayer = map.getLayers().get(4);
+        return collisionObjectLayer.getObjects();
+    }
+
 
     public OrthogonalTiledMapRenderer makeMap(){
         return new OrthogonalTiledMapRenderer(map);

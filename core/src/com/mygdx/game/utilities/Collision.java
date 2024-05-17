@@ -11,9 +11,11 @@ import com.mygdx.game.weapons.Projectile;
 
 public class Collision {
     private MapObjects collision_objects;
+    private MapObjects bullet_collision_objects;
 
     public Collision(){
         collision_objects = new Map().getCollissionObjects();
+        bullet_collision_objects = new Map().getBulletCollissionObjects();
     }
 
     public void displayCollision(Rectangle player_bounds, Sprite character){
@@ -53,7 +55,7 @@ public class Collision {
 
     //Checks for Bullet Collision with a wall
     public boolean bulletCollision(Rectangle projectile){
-        for (MapObject object : collision_objects) {
+        for (MapObject object : bullet_collision_objects) {
             if (object instanceof RectangleMapObject) {
                 Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
                 // Check for collision

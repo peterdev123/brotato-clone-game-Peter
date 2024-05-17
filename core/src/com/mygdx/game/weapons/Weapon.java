@@ -20,7 +20,6 @@ public class Weapon{
     public Array<Projectile> projectiles;
     public ShapeRenderer shapeRenderer;
 
-
     //COLLISION
     public Collision collision;
 
@@ -110,6 +109,7 @@ public class Weapon{
             for(int i = 0; i < projectiles.size; i++){
                 Projectile proj = projectiles.get(i);
 
+                //removes bullet when projectile hits wall
                 if(proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera)){
                     projectiles.removeIndex(i);
                     i--;
@@ -140,6 +140,7 @@ public class Weapon{
                 TextureRegion projectile = proj.getProjectileTexture();
                 projectile.flip(true, false);
 
+                //removes bullet when projectile hits wall
                 if(proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera)){
                     projectiles.removeIndex(i);
                     i--;
