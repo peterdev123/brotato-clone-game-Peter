@@ -55,6 +55,5 @@ public class Projectile{
 //            shapeRenderer.end();
 
         return collision.bulletCollision(rectangle);
-
     }
 }

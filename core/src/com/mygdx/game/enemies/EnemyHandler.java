@@ -1,9 +1,12 @@
 package com.mygdx.game.enemies;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -15,11 +18,15 @@ public class EnemyHandler {
     private ArrayList<Enemy> enemies;
     private Random random;
 
+    //SPAWN TIME
     private long lastSpawnTime;
-    private static final long SPAWN_INTERVAL = 3000; // 3 seconds in milliseconds
+    private static final long SPAWN_INTERVAL = 5000; // 5 seconds in milliseconds
 
     // ZOMBIE TEXTURES
     private Texture[] zombieTextures;
+
+    //DEBUGGING
+    private ShapeRenderer shapeRenderer;
 
     public EnemyHandler() {
         spriteBatch = new SpriteBatch();
@@ -33,20 +40,36 @@ public class EnemyHandler {
                 new Texture(Gdx.files.internal("assets/enemies/Zombie 2/Idle/0_Zombie_Villager_Idle_000.png")),
                 new Texture(Gdx.files.internal("assets/enemies/Zombie 3/Idle/0_Zombie_Villager_Idle_000.png"))
         };
+
+        //DEBUGGING
+        spawnEnemies();
+        shapeRenderer = new ShapeRenderer();
     }
 
     public void handleWave(OrthographicCamera camera) {
         spriteBatch.begin();
-        if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
-            spawnEnemies();
-            lastSpawnTime = TimeUtils.millis();
-        }
+
+        //DEBUGGING
+//        if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
+//            spawnEnemies();
+//            lastSpawnTime = TimeUtils.millis();
+//        }
 
         spriteBatch.setProjectionMatrix(camera.combined);
+
+        //DEBUGGING
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BROWN);
+
         for (Enemy enemy : enemies) {
-            spriteBatch.draw(enemy.enemy_texture, enemy.position.x, enemy.position.y, 45, 45);
+            Rectangle enemy_hitbox = enemy.getEnemyHitbox();
+            spriteBatch.draw(enemy.enemy_texture, enemy.position.x, enemy.position.y, enemy.size.x, enemy.size.y);
+            shapeRenderer.rect(enemy_hitbox.x, enemy_hitbox.y, enemy_hitbox.width, enemy_hitbox.height);
+
         }
         spriteBatch.end();
+        shapeRenderer.end();
     }
 
     public void spawnEnemies() {
