@@ -88,15 +88,15 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="Collision Layer" visible="0">
-  <object id="9" x="71.0495" y="39.5432" width="425" height="25.5"/>
-  <object id="10" x="494.462" y="62.9885" width="39.5" height="295.073"/>
+ <objectgroup id="3" name="Collision Layer">
+  <object id="9" x="46.8225" y="39.5432" width="481.256" height="25.5"/>
+  <object id="10" x="489.535" y="37.9402" width="39.5" height="320.121"/>
   <object id="11" x="67.5517" y="340.476" width="427.438" height="26"/>
   <object id="13" x="49.5" y="43" width="22" height="315"/>
  </objectgroup>
- <objectgroup id="5" name="Bullet Layer">
+ <objectgroup id="5" name="Bullet Layer" visible="0">
   <object id="15" x="57.9458" y="28.0961" width="449.281" height="25.5"/>
-  <object id="16" x="502.848" y="47.817" width="39.5" height="301.143"/>
+  <object id="16" x="504.491" y="47.817" width="39.5" height="301.143"/>
   <object id="17" x="52.3862" y="347.054" width="456.455" height="25.5"/>
   <object id="18" x="18.8792" y="44.2301" width="39.5" height="311.076"/>
  </objectgroup>

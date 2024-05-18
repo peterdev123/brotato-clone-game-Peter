@@ -9,13 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.main.Map;
 import com.mygdx.game.utilities.Animator;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Weapon;
@@ -109,7 +104,7 @@ public class Player{
 //        shapeRendererCollision.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
 //        shapeRendererCollision.end();
 
-        collision.displayCollision(player_bounds, character);
+        collision.playerCollision(player_bounds, character);
 
         isMovingLeft = checkDirectionFacing(camera);
 
@@ -163,7 +158,11 @@ public class Player{
             spriteBatch.draw(idles, character.getX() - 40, character.getY() - 10, PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
+        //Weapons
         weaponHandler.handleWeapon(camera, spriteBatch, character.getX(), character.getY());
+
+        //Change Weapon Test
+        weaponHandler.test();
 
         //collision box
         player_bounds = new Rectangle(character.getX(), character.getY(), COLLISION_WIDTH, COLLISION_HEIGHT);

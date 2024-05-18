@@ -41,6 +41,19 @@ public class Weapon{
         return flipped_weapon;
     }
 
+    //Change Weapon Test
+    public void test(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR2.png"));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR3.png"));
+        }
+    }
+
     //TODO: Make bullet disappear when hitting a wall
     public void handleWeapon(OrthographicCamera camera, SpriteBatch spriteBatch, float char_x, float char_y) {
         Vector3 unprojectedPosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));

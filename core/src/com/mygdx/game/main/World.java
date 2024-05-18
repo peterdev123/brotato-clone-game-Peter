@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 
 public class World implements Screen {
@@ -25,12 +26,18 @@ public class World implements Screen {
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
 
+    //ENEMIES
+    private EnemyHandler enemyHandler;
+
     public World(){
         map = new Map();
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
         player = new Player();
+
+        //ENEMIES
+        enemyHandler = new EnemyHandler();
     }
 
     public void show(){
@@ -80,6 +87,10 @@ public class World implements Screen {
         renderer.setView(camera);
         renderer.render(new int[] {0, 1});
         player.handleMovement(camera);
+
+        //ENEMIES: DEBUGGING
+        enemyHandler.handleWave(camera);
+
         renderer.render(new int[] {2});
     }
 

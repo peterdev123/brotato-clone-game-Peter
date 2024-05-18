@@ -7,7 +7,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.main.Map;
-import com.mygdx.game.weapons.Projectile;
 
 public class Collision {
     private MapObjects collision_objects;
@@ -18,7 +17,7 @@ public class Collision {
         bullet_collision_objects = new Map().getBulletCollissionObjects();
     }
 
-    public void displayCollision(Rectangle player_bounds, Sprite character){
+    public void playerCollision(Rectangle player_bounds, Sprite character){
         for (MapObject object : collision_objects) {
             if (object instanceof RectangleMapObject) {
                 Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
