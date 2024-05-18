@@ -11,23 +11,40 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.player.Player;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
+
+import java.util.Random;
 
 public class Weapon{
     public Texture current_weapon;
     public Array<Projectile> projectiles;
     public ShapeRenderer shapeRenderer;
+    public Player player_reference;
 
     //COLLISION
     public Collision collision;
 
-    public Weapon(){
+    //WEAPON STATS
+    public int damage;
+    private int fire_rate;
+
+    //RANDOM
+    private Random rand;
+
+    public Weapon(Player player){
+        this.player_reference = player;
         current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
 
         collision = new Collision();
+
+        damage = 10;
+        fire_rate = 1;
+
+        rand = new Random();
     }
 
     public TextureRegion getWeapon(){
@@ -184,6 +201,13 @@ public class Weapon{
     private boolean checkDirectionFacing(OrthographicCamera camera, float char_x){
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - char_x > 0);
+    }
+
+    public int getDamage(){
+        int baseDamage = (int) (damage * player_reference.getMultiplier());
+        int randomOffset = rand.nextInt(13) - 6; // Generates a random number between -6 and +6
+        int damageDealt = baseDamage + randomOffset;
+        return damageDealt;
     }
 
     //FOR ZOMBIE COLLISION

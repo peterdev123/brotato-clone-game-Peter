@@ -29,8 +29,9 @@ public class Player{
     private Weapon weaponHandler;
 
     //Player Attributes
-//    private int health;
-//    private int coins;
+    private int health;
+    private int coins;
+    private float damage_multiplier;
 
     //Player Prerequisites
     public SpriteBatch spriteBatch;
@@ -78,12 +79,17 @@ public class Player{
         shapeRendererCollision = new ShapeRenderer();
         shapeRendererLOS = new ShapeRenderer();
 
-        weaponHandler = new Weapon();
+        weaponHandler = new Weapon(this);
 
         idle = new Texture(Gdx.files.internal("animations/idle_test.png"));
         run = new Texture(Gdx.files.internal("animations/run_test.png"));
         idle_inverse = new Texture(Gdx.files.internal("animations/idle_inverse_test.png"));
         run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
+
+        //PLAYER ATTRIBUTES
+        health = 30;
+        coins = 0;
+        damage_multiplier = 1;
     }
 
     public void handleMovement(OrthographicCamera camera){
@@ -182,4 +188,9 @@ public class Player{
     public Weapon getWeapon(){
         return weaponHandler;
     }
+
+    public float getMultiplier(){
+        return damage_multiplier;
+    }
+
 }

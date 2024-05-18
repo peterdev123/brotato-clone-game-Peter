@@ -20,7 +20,7 @@ public class Enemy {
         this.enemy_texture = enemey_texture;
         this.position = position;
         this.size = new Vector2(45, 45);
-        health = 5;
+        health = 20;
         damage = 5;
 
         //ENEMY HITBOX
@@ -32,12 +32,16 @@ public class Enemy {
         return hitbox;
     }
 
-    public void takeDamage(){
+    public void takeDamage(int damage){
+        System.out.println("DAMAGE TAKEN: " + damage);
         System.out.println("Health Before: " + this.health);
-        health--;
+        health -= damage;
         System.out.println("Health After: " + this.health);
 
+        //NUMBER GOES OUT DISPLAYING DAMAGE
+
         if(health <= 0){
+            //TODO: PLAY DEATH ANIMATION AT LOCATION OF DEATH
             isALive = false;
         }
     }

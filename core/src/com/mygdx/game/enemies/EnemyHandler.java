@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -31,8 +30,8 @@ public class EnemyHandler {
     private Texture[] zombieTextures;
 
     //DEBUGGING
-    private ShapeRenderer shapeRenderer;
     private Array<Projectile> projectiles;
+    private ShapeRenderer shapeRenderer;
     private Collision enemyCollision;
     private Weapon weapon;
 
@@ -65,14 +64,14 @@ public class EnemyHandler {
         spriteBatch.begin();
 
         //DEBUGGING
-//        if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
-//            spawnEnemies();
-//            lastSpawnTime = TimeUtils.millis();
-//        }
+        if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
+            spawnEnemies();
+            lastSpawnTime = TimeUtils.millis();
+        }
 
         //CHECK ZOMBIE TAKING DAMAGE OR DEAD
         projectiles = weapon.getProjectiles();
-        Projectile collided_projectile = enemyCollision.enemyCollision(projectiles, enemies);
+        Projectile collided_projectile = enemyCollision.enemyCollision(projectiles, enemies, weapon.damage , weapon.getDamage());
         if(collided_projectile != null){
             projectiles.removeValue(collided_projectile, true);
         }
@@ -86,6 +85,9 @@ public class EnemyHandler {
         handleDeadEnemies();
 
         spriteBatch.setProjectionMatrix(camera.combined);
+
+        //RENDERS FLOATING DAMAGE
+        enemyCollision.renderFloatingDamages(spriteBatch);
 
         //DEBUGGING
         shapeRenderer.setProjectionMatrix(camera.combined);
