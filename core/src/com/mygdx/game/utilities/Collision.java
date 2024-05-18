@@ -6,7 +6,12 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.enemies.Enemy;
 import com.mygdx.game.main.Map;
+import com.mygdx.game.weapons.Projectile;
+
+import java.util.ArrayList;
 
 public class Collision {
     private MapObjects collision_objects;
@@ -52,7 +57,7 @@ public class Collision {
         }
     }
 
-    //Checks for Bullet Collision with a wall
+    //CHECKS FOR BULLET COLLISION WITH A WALL
     public boolean bulletCollision(Rectangle projectile){
         for (MapObject object : bullet_collision_objects) {
             if (object instanceof RectangleMapObject) {
@@ -65,4 +70,18 @@ public class Collision {
         }
         return false;
     }
+
+    //CHECKS WHETHER ENEMY GOT HIT
+    public Projectile enemyCollision(Array<Projectile> projectiles, ArrayList<Enemy> enemies){
+        for(Projectile projectile : projectiles){
+            for (Enemy enemy: enemies){
+                if(Intersector.overlaps(projectile.rectangle, enemy.getEnemyHitbox())){
+                    enemy.takeDamage();
+                    return projectile;
+                }
+            }
+        }
+        return null;
+    }
+
 }

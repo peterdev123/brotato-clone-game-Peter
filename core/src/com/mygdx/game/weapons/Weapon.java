@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
-import com.sun.org.apache.bcel.internal.Const;
 
 public class Weapon{
     public Texture current_weapon;
@@ -54,7 +53,6 @@ public class Weapon{
         }
     }
 
-    //TODO: Make bullet disappear when hitting a wall
     public void handleWeapon(OrthographicCamera camera, SpriteBatch spriteBatch, float char_x, float char_y) {
         Vector3 unprojectedPosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -186,6 +184,11 @@ public class Weapon{
     private boolean checkDirectionFacing(OrthographicCamera camera, float char_x){
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - char_x > 0);
+    }
+
+    //FOR ZOMBIE COLLISION
+    public Array<Projectile> getProjectiles(){
+        return this.projectiles;
     }
 
 

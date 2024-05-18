@@ -178,4 +178,8 @@ public class Player{
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - character.getX() > 0);
     }
+
+    public Weapon getWeapon(){
+        return weaponHandler;
+    }
 }
