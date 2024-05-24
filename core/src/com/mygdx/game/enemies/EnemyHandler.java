@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.mygdx.game.player.Player;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Projectile;
 import com.mygdx.game.weapons.Weapon;
@@ -34,14 +35,16 @@ public class EnemyHandler {
     private ShapeRenderer shapeRenderer;
     private Collision enemyCollision;
     private Weapon weapon;
+    private Player player;
 
     private Array<Enemy> dead_enemies;
 
-    public EnemyHandler(Weapon weapon) {
+    public EnemyHandler(Weapon weapon, Player player) {
         spriteBatch = new SpriteBatch();
         random = new Random();
         enemies = new ArrayList<>();
         lastSpawnTime = TimeUtils.millis();
+        this.player = player;
 
         // Initialize zombie textures
         zombieTextures = new Texture[] {
@@ -83,6 +86,7 @@ public class EnemyHandler {
             }
         }
         handleDeadEnemies();
+        handleEnemyMovement();
 
         spriteBatch.setProjectionMatrix(camera.combined);
 
@@ -102,6 +106,13 @@ public class EnemyHandler {
         }
         spriteBatch.end();
         shapeRenderer.end();
+    }
+
+    //DEBUGGING
+    public void handleEnemyMovement(){
+        for(Enemy enemy: enemies){
+            enemy.moveEnemyTowardsPlayer(player.getLocation());
+        }
     }
 
     public void spawnEnemies() {

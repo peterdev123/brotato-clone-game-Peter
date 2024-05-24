@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.utilities.Animator;
 import com.mygdx.game.utilities.Collision;
@@ -183,6 +184,11 @@ public class Player{
     private boolean checkDirectionFacing(OrthographicCamera camera){
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - character.getX() > 0);
+    }
+
+    public Vector2 getLocation(){
+        Vector2 location = new Vector2(character.getX(), character.getY());
+        return location;
     }
 
     public Weapon getWeapon(){

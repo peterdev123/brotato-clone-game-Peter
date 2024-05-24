@@ -1,5 +1,6 @@
 package com.mygdx.game.enemies;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +13,7 @@ public class Enemy {
     private int health;
     private int damage;
     private boolean isALive;
+    private int speed;
 
     //ENEMY HITBOX
     private Rectangle hitbox;
@@ -22,6 +24,7 @@ public class Enemy {
         this.size = new Vector2(45, 45);
         health = 20;
         damage = 5;
+        speed = 50;
 
         //ENEMY HITBOX
         isALive = true;
@@ -30,6 +33,30 @@ public class Enemy {
 
     public Rectangle getEnemyHitbox(){
         return hitbox;
+    }
+
+    //DEBUGGING
+    public void moveEnemyTowardsPlayer(Vector2 player_position){
+        float prevX = position.x;
+        float prevY = position.y;
+
+        float deltaX = 0;
+        float deltaY = 0;
+
+        if (player_position.x < prevX) {
+            deltaX = -Gdx.graphics.getDeltaTime() * speed;
+        } else if (player_position.x > prevX) {
+            deltaX = Gdx.graphics.getDeltaTime() * speed;
+        }
+
+        if (player_position.y < prevY) {
+            deltaY = -Gdx.graphics.getDeltaTime() * speed;
+        } else if (player_position.y > prevY) {
+            deltaY = Gdx.graphics.getDeltaTime() * speed;
+        }
+
+        hitbox.set(prevX + deltaX, prevY + deltaY, size.x - 20, size.y - 20);
+        position.set(prevX + deltaX, prevY + deltaY);
     }
 
     public void takeDamage(int damage){

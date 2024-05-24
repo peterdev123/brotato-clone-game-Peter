@@ -37,7 +37,7 @@ public class World implements Screen {
         player = new Player();
 
         //ENEMIES
-        enemyHandler = new EnemyHandler(player.getWeapon());
+        enemyHandler = new EnemyHandler(player.getWeapon(), player);
     }
 
     public void show(){
