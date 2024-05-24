@@ -1,0 +1,61 @@
+werewr.png
+size: 8192, 4096
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+walk
+  rotate: false
+  xy: 0, 0
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 0
+walk
+  rotate: false
+  xy: 2048, 0
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 1
+walk
+  rotate: false
+  xy: 4096, 0
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 2
+walk
+  rotate: false
+  xy: 6144, 0
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 3
+walk
+  rotate: false
+  xy: 0, 2048
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 4
+walk
+  rotate: false
+  xy: 2048, 2048
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 5
+walk
+  rotate: false
+  xy: 4096, 2048
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 6
+walk
+  rotate: false
+  xy: 6144, 2048
+  size: 2048, 2048
+  orig: 2048, 2048
+  offset: 0, 0
+  index: 7
