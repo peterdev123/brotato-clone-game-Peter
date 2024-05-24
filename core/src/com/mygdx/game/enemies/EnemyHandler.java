@@ -86,6 +86,8 @@ public class EnemyHandler {
             }
         }
         handleDeadEnemies();
+
+        //DEBUGGING
         handleEnemyMovement();
 
         spriteBatch.setProjectionMatrix(camera.combined);
@@ -111,7 +113,7 @@ public class EnemyHandler {
     //DEBUGGING
     public void handleEnemyMovement(){
         for(Enemy enemy: enemies){
-            enemy.moveEnemyTowardsPlayer(player.getLocation());
+            enemy.moveEnemyTowardsPlayer(player.getLocation(), spriteBatch);
         }
     }
 

@@ -2,18 +2,24 @@ package com.mygdx.game.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.utilities.Animator;
 
 public class Enemy {
     public Texture enemy_texture;
     public Vector2 position;
     public Vector2 size;
+    public Animator animator;
 
     private int health;
     private int damage;
     private boolean isALive;
     private int speed;
+
+    private float stateTime;
 
     //ENEMY HITBOX
     private Rectangle hitbox;
@@ -24,7 +30,8 @@ public class Enemy {
         this.size = new Vector2(45, 45);
         health = 20;
         damage = 5;
-        speed = 50;
+        speed = 40;
+        stateTime = 0f;
 
         //ENEMY HITBOX
         isALive = true;
@@ -36,27 +43,24 @@ public class Enemy {
     }
 
     //DEBUGGING
-    public void moveEnemyTowardsPlayer(Vector2 player_position){
-        float prevX = position.x;
-        float prevY = position.y;
+    public void moveEnemyTowardsPlayer(Vector2 player_position, SpriteBatch spriteBatch){
+        stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
+        TextureRegion currentFrame = null;
 
-        float deltaX = 0;
-        float deltaY = 0;
+        // Calculate the direction vector
+        Vector2 direction = new Vector2(player_position.x - position.x, player_position.y - position.y);
 
-        if (player_position.x < prevX) {
-            deltaX = -Gdx.graphics.getDeltaTime() * speed;
-        } else if (player_position.x > prevX) {
-            deltaX = Gdx.graphics.getDeltaTime() * speed;
+        // Normalize the direction vector
+        if (direction.len() != 0) {
+            direction.nor();
         }
 
-        if (player_position.y < prevY) {
-            deltaY = -Gdx.graphics.getDeltaTime() * speed;
-        } else if (player_position.y > prevY) {
-            deltaY = Gdx.graphics.getDeltaTime() * speed;
-        }
+        // Calculate movement vector by scaling direction with speed and delta time
+        Vector2 movement = direction.scl(speed * Gdx.graphics.getDeltaTime());
 
-        hitbox.set(prevX + deltaX, prevY + deltaY, size.x - 20, size.y - 20);
-        position.set(prevX + deltaX, prevY + deltaY);
+        // Update position and hitbox
+        position.add(movement);
+        hitbox.setPosition(position.x + 10, position.y + 10);
     }
 
     public void takeDamage(int damage){
