@@ -5,12 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.player.Player;
+import com.mygdx.game.utilities.Animator;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Projectile;
 import com.mygdx.game.weapons.Weapon;
@@ -22,6 +24,7 @@ public class EnemyHandler {
     public SpriteBatch spriteBatch;
     private ArrayList<Enemy> enemies;
     private Random random;
+    private Animator animator;
 
     //SPAWN TIME
     private long lastSpawnTime;
@@ -37,12 +40,24 @@ public class EnemyHandler {
     private Weapon weapon;
     private Player player;
 
+    private float stateTime;
+
     private Array<Enemy> dead_enemies;
+
+    //animations
+    private Texture zombie_1_run;
+    private Texture zombie_1_run_inverse;
+    private Texture zombie_2_run;
+    private Texture zombie_2_run_inverse;
+    private Texture zombie_3_run;
+    private Texture zombie_3_run_inverse;
 
     public EnemyHandler(Weapon weapon, Player player) {
         spriteBatch = new SpriteBatch();
         random = new Random();
         enemies = new ArrayList<>();
+        animator = new Animator();
+
         lastSpawnTime = TimeUtils.millis();
         this.player = player;
 
@@ -53,6 +68,13 @@ public class EnemyHandler {
                 new Texture(Gdx.files.internal("assets/enemies/Zombie 3/Idle/0_Zombie_Villager_Idle_000.png"))
         };
 
+        zombie_1_run = new Texture(Gdx.files.internal("animations/zombie_1/zombie_run.png"));
+        zombie_1_run_inverse = new Texture(Gdx.files.internal("animations/zombie_1/zombie_run_inverse.png"));
+        zombie_2_run = new Texture(Gdx.files.internal("animations/zombie_2/zombie_2_run.png"));
+        zombie_2_run_inverse = new Texture(Gdx.files.internal("animations/zombie_2/zombie_2_run_inversed.png"));
+        zombie_3_run = new Texture(Gdx.files.internal("animations/zombie_3/zombie_3_run.png"));
+        zombie_3_run_inverse = new Texture(Gdx.files.internal("animations/zombie_3/zombie_3_run_inversed.png"));
+
         //DEBUGGING
         spawnEnemies();
         this.weapon = weapon;
@@ -61,10 +83,12 @@ public class EnemyHandler {
         enemyCollision = new Collision();
 
         dead_enemies = new Array<>();
+        stateTime = 0f;
     }
 
     public void handleWave(OrthographicCamera camera) {
         spriteBatch.begin();
+        stateTime += Gdx.graphics.getDeltaTime() * 0.45f;
 
         //DEBUGGING
         if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
@@ -102,7 +126,11 @@ public class EnemyHandler {
 
         for (Enemy enemy : enemies) {
             Rectangle enemy_hitbox = enemy.getEnemyHitbox();
-            spriteBatch.draw(enemy.enemy_texture, enemy.position.x, enemy.position.y, enemy.size.x, enemy.size.y);
+
+            TextureRegion zombie = animator.animateZombie(getRunTexture(enemy)).getKeyFrame(stateTime, true);
+
+            //draw animation
+            spriteBatch.draw(zombie, enemy.position.x, enemy.position.y, enemy.size.x, enemy.size.y);
 //            shapeRenderer.rect(enemy_hitbox.x, enemy_hitbox.y, enemy_hitbox.width, enemy_hitbox.height);
 
         }
@@ -110,17 +138,31 @@ public class EnemyHandler {
         shapeRenderer.end();
     }
 
-    //DEBUGGING
     public void handleEnemyMovement(){
         for(Enemy enemy: enemies){
             enemy.moveEnemyTowardsPlayer(player.getLocation(), spriteBatch);
         }
     }
 
+    private Texture getRunTexture(Enemy enemy){
+        if(enemy.zombie_number == 0){
+            return (player.getLocation().x < enemy.position.x) ? zombie_1_run_inverse : zombie_1_run;
+        }
+        if(enemy.zombie_number == 1){
+            return (player.getLocation().x < enemy.position.x) ? zombie_2_run_inverse : zombie_2_run;
+
+        }
+        if(enemy.zombie_number == 2){
+            return (player.getLocation().x < enemy.position.x) ? zombie_3_run_inverse : zombie_3_run;
+        }
+        return null;
+    }
+
     public void spawnEnemies() {
         for (int i = 0; i < 3; i++) {
-            Texture randomTexture = zombieTextures[random.nextInt(zombieTextures.length)];
-            enemies.add(new Enemy(randomTexture, rand()));
+            int rand = random.nextInt(zombieTextures.length);
+            Texture randomTexture = zombieTextures[rand];
+            enemies.add(new Enemy(randomTexture, rand(), rand));
         }
     }
 

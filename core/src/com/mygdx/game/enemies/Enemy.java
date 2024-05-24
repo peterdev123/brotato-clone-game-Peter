@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utilities.Animator;
 
 public class Enemy {
+    public int zombie_number;
     public Texture enemy_texture;
     public Vector2 position;
     public Vector2 size;
@@ -24,18 +25,25 @@ public class Enemy {
     //ENEMY HITBOX
     private Rectangle hitbox;
 
-    public Enemy(Texture enemey_texture, Vector2 position){
+
+    //animations
+
+    public Enemy(Texture enemey_texture, Vector2 position, int zombie_number){
+        this.zombie_number = zombie_number;
         this.enemy_texture = enemey_texture;
         this.position = position;
         this.size = new Vector2(45, 45);
         health = 20;
         damage = 5;
-        speed = 40;
+        speed = 60;
         stateTime = 0f;
 
         //ENEMY HITBOX
         isALive = true;
         hitbox = new Rectangle(position.x + 10, position.y + 10, size.x - 20, size.y - 20);
+
+        //animations
+        animator = new Animator();
     }
 
     public Rectangle getEnemyHitbox(){
@@ -44,8 +52,6 @@ public class Enemy {
 
     //DEBUGGING
     public void moveEnemyTowardsPlayer(Vector2 player_position, SpriteBatch spriteBatch){
-        stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
-        TextureRegion currentFrame = null;
 
         // Calculate the direction vector
         Vector2 direction = new Vector2(player_position.x - position.x, player_position.y - position.y);
@@ -80,7 +86,4 @@ public class Enemy {
     public boolean checkIsAlive(){
         return isALive;
     }
-
-
-
 }
