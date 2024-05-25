@@ -9,9 +9,9 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.enemies.Enemy;
+import com.mygdx.game.enemies.Enemies;
+import com.mygdx.game.enemies.Zombie1;
 import com.mygdx.game.main.Map;
-import com.mygdx.game.player.Player;
 import com.mygdx.game.weapons.Projectile;
 
 import java.util.ArrayList;
@@ -79,12 +79,12 @@ public class Collision {
     }
 
     //CHECKS WHETHER ENEMY GOT HIT
-    public Projectile enemyCollision(Array<Projectile> projectiles, ArrayList<Enemy> enemies, int base_damage, int damage){
+    public Projectile enemyCollision(Array<Projectile> projectiles, ArrayList<Enemies> enemies, int base_damage, int damage){
         for(Projectile projectile : projectiles){
-            for (Enemy enemy: enemies){
+            for (Enemies enemy: enemies){
                 if(Intersector.overlaps(projectile.rectangle, enemy.getEnemyHitbox())){
                     enemy.takeDamage(damage);
-                    floatingDamages.add(new DamageIndicator(new Vector2(enemy.position.x, enemy.position.y), base_damage, damage));
+                    floatingDamages.add(new DamageIndicator(new Vector2(enemy.getPosition().x, enemy.getPosition().y), base_damage, damage));
                     return projectile;
                 }
             }

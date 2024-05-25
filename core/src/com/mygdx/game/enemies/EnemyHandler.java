@@ -22,18 +22,21 @@ import java.util.Random;
 
 public class EnemyHandler {
     public SpriteBatch spriteBatch;
-    private ArrayList<Enemy> enemies;
+    private ArrayList<Enemies> enemies; // Change type to Enemies
     private Random random;
     private Animator animator;
 
-    //SPAWN TIME
+    // HP PERCENTAGE INCREASE EVERY AFTER WAVE;
+    double hpPercentage;
+
+    // SPAWN TIME
     private long lastSpawnTime;
     private static final long SPAWN_INTERVAL = 5000; // 5 seconds in milliseconds
 
     // ZOMBIE TEXTURES
     private Texture[] zombieTextures;
 
-    //DEBUGGING
+    // DEBUGGING
     private Array<Projectile> projectiles;
     private ShapeRenderer shapeRenderer;
     private Collision enemyCollision;
@@ -42,7 +45,7 @@ public class EnemyHandler {
 
     private float stateTime;
 
-    private Array<Enemy> dead_enemies;
+    private Array<Enemies> dead_enemies;
 
     //animations
     private Texture zombie_1_run;
@@ -60,6 +63,7 @@ public class EnemyHandler {
 
         lastSpawnTime = TimeUtils.millis();
         this.player = player;
+        hpPercentage = 1;
 
         // Initialize zombie textures
         zombieTextures = new Texture[] {
@@ -75,7 +79,7 @@ public class EnemyHandler {
         zombie_3_run = new Texture(Gdx.files.internal("animations/zombie_3/zombie_3_run.png"));
         zombie_3_run_inverse = new Texture(Gdx.files.internal("animations/zombie_3/zombie_3_run_inversed.png"));
 
-        //DEBUGGING
+        // DEBUGGING
         spawnEnemies();
         this.weapon = weapon;
         projectiles = weapon.getProjectiles();
@@ -86,26 +90,34 @@ public class EnemyHandler {
         stateTime = 0f;
     }
 
+    public void setHealthEnemies(int currentWave) {
+        if(hpPercentage == 1) {
+            hpPercentage = 1.2;
+        }else {
+            hpPercentage = Math.pow(1.2, currentWave - 1);
+        }
+    }
+
     public void handleWave(OrthographicCamera camera) {
         spriteBatch.begin();
         stateTime += Gdx.graphics.getDeltaTime() * 0.45f;
 
-        //DEBUGGING
+        // DEBUGGING
         if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
             spawnEnemies();
             lastSpawnTime = TimeUtils.millis();
         }
 
-        //CHECK ZOMBIE TAKING DAMAGE OR DEAD
+        // CHECK ZOMBIE TAKING DAMAGE OR DEAD
         projectiles = weapon.getProjectiles();
         Projectile collided_projectile = enemyCollision.enemyCollision(projectiles, enemies, weapon.damage , weapon.getDamage());
         if(collided_projectile != null){
             projectiles.removeValue(collided_projectile, true);
         }
 
-        //HANDLES DEAD ENEMIES
-        for(Enemy enemy: enemies){
-            if(!enemy.checkIsAlive()){
+        // HANDLES DEAD ENEMIES
+        for(Enemies enemy: enemies){ // Iterate over Enemies, not Zombie1
+            if(!enemy.isAlive()){
                 dead_enemies.add(enemy);
             }
         }
@@ -116,61 +128,75 @@ public class EnemyHandler {
 
         spriteBatch.setProjectionMatrix(camera.combined);
 
-        //RENDERS FLOATING DAMAGE
+        // RENDERS FLOATING DAMAGE
         enemyCollision.renderFloatingDamages(spriteBatch);
 
-        //DEBUGGING
+        // DEBUGGING
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BROWN);
 
-        for (Enemy enemy : enemies) {
+        for (Enemies enemy : enemies) { // Iterate over Enemies, not Zombie1
             Rectangle enemy_hitbox = enemy.getEnemyHitbox();
-
-            TextureRegion zombie = animator.animateZombie(getRunTexture(enemy)).getKeyFrame(stateTime, true);
-
-            //draw animation
-            spriteBatch.draw(zombie, enemy.position.x, enemy.position.y, enemy.size.x, enemy.size.y);
-//            shapeRenderer.rect(enemy_hitbox.x, enemy_hitbox.y, enemy_hitbox.width, enemy_hitbox.height);
-
+            if (enemy instanceof Zombie1) {
+                TextureRegion zombie = animator.animateZombie(getRunTexture(enemy)).getKeyFrame(stateTime, true);
+                spriteBatch.draw(zombie, enemy.getPosition().x, enemy.getPosition().y, enemy.getSize().x, enemy.getSize().y);
+            } else if (enemy instanceof Zombie2) {
+                TextureRegion zombie = animator.animateZombie(getRunTexture(enemy)).getKeyFrame(stateTime, true);
+                spriteBatch.draw(zombie, enemy.getPosition().x, enemy.getPosition().y, enemy.getSize().x, enemy.getSize().y);
+            } else if (enemy instanceof Zombie3) {
+                TextureRegion zombie = animator.animateZombie(getRunTexture(enemy)).getKeyFrame(stateTime, true);
+                spriteBatch.draw(zombie, enemy.getPosition().x, enemy.getPosition().y, enemy.getSize().x, enemy.getSize().y);
+            }
         }
         spriteBatch.end();
         shapeRenderer.end();
     }
 
     public void handleEnemyMovement(){
-        for(Enemy enemy: enemies){
+        for(Enemies enemy: enemies){
             enemy.moveEnemyTowardsPlayer(player.getLocation(), spriteBatch);
         }
     }
 
-    private Texture getRunTexture(Enemy enemy){
-        if(enemy.zombie_number == 0){
-            return (player.getLocation().x < enemy.position.x) ? zombie_1_run_inverse : zombie_1_run;
+    private Texture getRunTexture(Enemies enemy){
+        if(enemy.getZombieNumber() == 0){
+            return (player.getLocation().x < enemy.getPosition().x) ? zombie_1_run_inverse : zombie_1_run;
         }
-        if(enemy.zombie_number == 1){
-            return (player.getLocation().x < enemy.position.x) ? zombie_2_run_inverse : zombie_2_run;
+        if(enemy.getZombieNumber() == 1){
+            return (player.getLocation().x < enemy.getPosition().x) ? zombie_2_run_inverse : zombie_2_run;
 
         }
-        if(enemy.zombie_number == 2){
-            return (player.getLocation().x < enemy.position.x) ? zombie_3_run_inverse : zombie_3_run;
+        if(enemy.getZombieNumber() == 2){
+            return (player.getLocation().x < enemy.getPosition().x) ? zombie_3_run_inverse : zombie_3_run;
         }
         return null;
     }
 
     public void spawnEnemies() {
-        for (int i = 0; i < 3; i++) {
-            int rand = random.nextInt(zombieTextures.length);
-            Texture randomTexture = zombieTextures[rand];
-            enemies.add(new Enemy(randomTexture, rand(), rand));
+        for (int i = 0; i < 4; i++) {
+            int type = random.nextInt(3);
+            Enemies enemy;
+            switch (type) {
+                case 1:
+                    enemy = new Zombie2((int) (25 * hpPercentage), zombieTextures[type], rand());
+                    break;
+                case 2:
+                    enemy = new Zombie3((int) (30 * hpPercentage), zombieTextures[type], rand());
+                    break;
+                default:
+                    enemy = new Zombie1((int) (20 * hpPercentage), zombieTextures[type], rand());
+                    break;
+            }
+            enemies.add(enemy);
         }
     }
 
-    //REMOVES THE ENEMIES FROM ARRAYLIST WHEN ISALIVE IS FALSE
-    private void handleDeadEnemies(){
-       for(Enemy dead_enemy: dead_enemies){
-           enemies.remove(dead_enemy);
-       }
+    // REMOVES THE ENEMIES FROM ARRAYLIST WHEN ISALIVE IS FALSE
+    private void handleDeadEnemies() {
+        for(Enemies dead_enemy: dead_enemies){
+            enemies.remove(dead_enemy);
+        }
     }
 
     private Vector2 rand() {

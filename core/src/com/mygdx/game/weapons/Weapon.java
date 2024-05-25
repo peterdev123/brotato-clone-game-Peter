@@ -15,6 +15,9 @@ import com.mygdx.game.player.Player;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Weapon{
@@ -33,9 +36,12 @@ public class Weapon{
     //RANDOM
     private Random rand;
 
+    //GUNSHOT CLIP
+    private Clip clipShot;
+
     public Weapon(Player player){
         this.player_reference = player;
-        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
+        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR2.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
 
@@ -45,6 +51,7 @@ public class Weapon{
         fire_rate = 1;
 
         rand = new Random();
+        loadGunShotClip("assets/Audio/Menu/Buttons/HoverBeep.wav");
     }
 
     public TextureRegion getWeapon(){
@@ -128,6 +135,7 @@ public class Weapon{
                 Vector2 direction = new Vector2(unprojectedPosition.x - char_x, unprojectedPosition.y - char_y - 10).nor();
                 projectiles.add(new Projectile(new Vector2(char_x, char_y), direction, angle));
                 Rumble.rumble(2, .2f);
+                playGunShotClip();
             }
 
             for(Projectile proj : projectiles){
@@ -157,6 +165,7 @@ public class Weapon{
                 Vector2 direction = new Vector2(unprojectedPosition.x - char_x, unprojectedPosition.y - char_y - 10).nor();
                 projectiles.add(new Projectile(new Vector2(char_x, char_y), direction, angle));
                 Rumble.rumble(2, .2f);
+                playGunShotClip();
             }
 
             for(Projectile proj : projectiles){
@@ -195,6 +204,29 @@ public class Weapon{
         if (Rumble.getRumbleTimeLeft() > 0){
             Rumble.tick(Gdx.graphics.getDeltaTime());
             camera.translate(Rumble.getPos());
+        }
+    }
+
+    private void loadGunShotClip(String filePath) {
+        try {
+            File soundFile = new File(filePath);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            clipShot = AudioSystem.getClip();
+            clipShot.open(audioIn);
+
+            FloatControl gainControl = (FloatControl) clipShot.getControl(FloatControl.Type.MASTER_GAIN);
+            float volume = (float) (Math.log(0.09) / Math.log(10.0) * 20.0); // -12 dB
+            gainControl.setValue(volume);
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playGunShotClip() {
+        if (clipShot != null) {
+            clipShot.setFramePosition(0); // Rewind to start
+            clipShot.start();
         }
     }
 

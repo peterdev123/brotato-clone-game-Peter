@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Screens.Intermession;
 import com.mygdx.game.utilities.Animator;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Weapon;
@@ -19,7 +20,7 @@ import com.mygdx.game.weapons.Weapon;
 public class Player{
     //CONSTANTS
     private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84, COLLISION_WIDTH = 5, COLLISION_HEIGHT = 5,
-                  LOS_WIDTH = 180, LOS_HEIGHT = 180;
+            LOS_WIDTH = 180, LOS_HEIGHT = 180;
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
 
@@ -30,9 +31,10 @@ public class Player{
     private Weapon weaponHandler;
 
     //Player Attributes
-    private int health;
-    private int coins;
-    private float damage_multiplier;
+    private float maxHealth;
+    private float health;
+    private int armor;
+    public static float damage_multiplier;
 
     //Player Prerequisites
     public SpriteBatch spriteBatch;
@@ -62,7 +64,10 @@ public class Player{
     private ShapeRenderer shapeRendererCollision;
     private ShapeRenderer shapeRendererLOS;
 
-    public Player(){
+    private Intermession intermessionData;
+
+    public Player(Intermession intermessionData){
+        this.intermessionData = intermessionData;
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         character.setScale(-2f);
         spriteBatch = new SpriteBatch();
@@ -88,17 +93,54 @@ public class Player{
         run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
 
         //PLAYER ATTRIBUTES
-        health = 30;
-        coins = 0;
-        damage_multiplier = 1;
+        maxHealth = 30;
+        health = maxHealth;
+        damage_multiplier = 1.0f;
+        armor = 0;
     }
 
+    //SET SPEED BASED ON STATS
+    private void setSpeed() {
+        speed = (55 + (intermessionData.getSpeedData() * 4)) * 2;
+    }
+
+    //SET HP BASED ON STATS
+    private void setHealth() {
+        health = health + (intermessionData.getHpData() * 2);
+        if (health > maxHealth) {
+            maxHealth = health;
+        }
+
+    }
+
+
+
+    //SET ARMOR BASED ON STATS
+    private void setArmor() {
+        armor = intermessionData.getArmorData();
+    }
+
+    //DEBUG
+//    private void showStats() {
+//        System.out.print(health + " " + damage_multiplier + " " + speed + " " + armor);
+//        System.out.println();
+//    }
+
+    //SET DAMAGE BASED ON STATS
+    private void setDamage_multiplier() {
+        damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
+    }
+    public void updatePlayerStats(){
+        setSpeed();
+        setHealth();
+        setArmor();
+        setDamage_multiplier();
+    }
     public void handleMovement(OrthographicCamera camera){
         stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
         TextureRegion currentFrame = null;
 
-
-          //debugging
+        //debugging
 //        shapeRendererLOS.setProjectionMatrix(camera.combined);
 //        shapeRendererLOS.begin(ShapeRenderer.ShapeType.Filled);
 //        shapeRendererLOS.setColor(Color.BLUE);
@@ -186,17 +228,43 @@ public class Player{
         return !(position.x - character.getX() > 0);
     }
 
-    public Vector2 getLocation(){
-        Vector2 location = new Vector2(character.getX(), character.getY());
-        return location;
-    }
-
     public Weapon getWeapon(){
         return weaponHandler;
     }
 
     public float getMultiplier(){
         return damage_multiplier;
+    }
+
+    public void decreaseHealth(float amount) {
+        health -= amount;
+        if (health < 0) {
+            health = 0;
+        }
+    }
+
+
+    public void increaseHealth(float amount) {
+        health += amount;
+        if (health > maxHealth) {
+            maxHealth = health;
+        }
+    }
+
+    public float getHealthPercentage() {
+        return health / maxHealth;
+    }
+
+    public float getCurrentHealth(){
+        return health;
+    }
+
+    public float getMaxHealth(){
+        return maxHealth;
+    }
+
+    public Vector2 getLocation(){
+        return new Vector2(character.getX(), character.getY());
     }
 
 }

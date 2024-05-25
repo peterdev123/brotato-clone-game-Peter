@@ -1,13 +1,26 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.mygdx.game.Screens.Intermession;
 import com.mygdx.game.main.World;
 
 public class TitleFight extends Game {
+	private Intermession intermession;
+	private World world;
 
 	@Override
-	public void create () {
-		setScreen(new World());
+	public void create() {
+		world = new World(this);
+		intermession = new Intermession();
+		setScreen(world);
+	}
+
+	public void showIntermessionScreen() {
+		setScreen(intermession);
+	}
+
+	public void showGameScreen() {
+		setScreen(world);
 	}
 
 	@Override

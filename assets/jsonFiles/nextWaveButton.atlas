@@ -1,0 +1,19 @@
+
+nextWaveButton.png
+size: 512, 512
+format: RGBA8888
+repeat: none
+nextwave0
+  rotate: false
+  xy: 1, 183
+  size: 295, 111
+  orig: 295, 111
+  offset: 0, 0
+  index: -1
+nextwave1
+  rotate: false
+  xy: 1, 86
+  size: 281, 95
+  orig: 281, 95
+  offset: 0, 0
+  index: -1
