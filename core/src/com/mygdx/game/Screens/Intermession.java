@@ -159,11 +159,37 @@ public class Intermession implements Screen {
     }
 
     private void updateProgressBar() {
-        Texture hpProg = progTextures[progressBar[0]];
-        Texture dmgProg = progTextures[progressBar[1]];
-        Texture ddgProg = progTextures[progressBar[2]];
-        Texture spdProg = progTextures[progressBar[3]];
-        Texture armProg = progTextures[progressBar[4]];
+        int hpBar = progressBar[0];
+        int dmgBar = progressBar[1];
+        int ddgBar = progressBar[2];
+        int spdBar = progressBar[3];
+        int armBar = progressBar[4];
+
+        if (progressBar[0] >= 9) {
+            hpBar = 9;
+        }
+
+        if (progressBar[1] >= 9) {
+            dmgBar = 9;
+        }
+
+        if (progressBar[2] >= 9) {
+            ddgBar = 9;
+        }
+
+        if (progressBar[3] >= 9) {
+            spdBar = 9;
+        }
+
+        if (progressBar[4] >= 9) {
+            armBar = 9;
+        }
+
+        Texture hpProg = progTextures[hpBar];
+        Texture dmgProg = progTextures[dmgBar];
+        Texture ddgProg = progTextures[ddgBar];
+        Texture spdProg = progTextures[spdBar];
+        Texture armProg = progTextures[armBar];
 
         float newWidth = (float) (placeholder.getWidth() * 1.3);
         float newHeight = (float) (placeholder.getHeight() * 1.1);
@@ -229,25 +255,21 @@ public class Intermession implements Screen {
         if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
             mouseY >= 860 && mouseY <= 860 + buttonHeight) {
             if (statPoints > 0) {
-                if (progressBar[0] < 9) {
-                    progressBar[0]++;
-                    statPoints--;
-                    return true;
-                }
+                progressBar[0]++;
+                statPoints--;
+                return true;
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 660 && mouseY <= 660 + buttonHeight) {
             if (statPoints > 0) {
-                if (progressBar[1] < 9) {
-                    progressBar[1]++;
-                    statPoints--;
-                    return true;
-                }
+                progressBar[1]++;
+                statPoints--;
+                return true;
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 475 && mouseY <= 475 + buttonHeight) {
             if (statPoints > 0) {
-                if (progressBar[2] < 9) {
+                if(progressBar[2] < 9) {
                     progressBar[2]++;
                     statPoints--;
                     return true;
@@ -256,20 +278,16 @@ public class Intermession implements Screen {
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 285 && mouseY <= 285 + buttonHeight) {
             if (statPoints > 0) {
-                if (progressBar[3] < 9) {
-                    progressBar[3]++;
-                    statPoints--;
-                    return true;
-                }
+                progressBar[3]++;
+                statPoints--;
+                return true;
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 90 && mouseY <= 90 + buttonHeight) {
             if (statPoints > 0) {
-                if (progressBar[4] < 9) {
-                    progressBar[4]++;
-                    statPoints--;
-                    return true;
-                }
+                progressBar[4]++;
+                statPoints--;
+                return true;
             }
         }
 
