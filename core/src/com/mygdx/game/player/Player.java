@@ -18,6 +18,7 @@ import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Weapon;
 
 public class Player{
+    private Rectangle hitbox;
     //CONSTANTS
     private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84, COLLISION_WIDTH = 5, COLLISION_HEIGHT = 5,
             LOS_WIDTH = 180, LOS_HEIGHT = 180;
@@ -93,10 +94,16 @@ public class Player{
         run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
 
         //PLAYER ATTRIBUTES
+        hitbox = new Rectangle(playerDrawX , playerDrawY , new Vector2(45, 45).x - 30, new Vector2(45, 45).y - 30);
         maxHealth = 30;
         health = maxHealth;
         damage_multiplier = 1.0f;
         armor = 0;
+    }
+
+    //RETURNS PLAYER HITBOX
+    public Rectangle getPlayerHitbox() {
+        return hitbox;
     }
 
     //SET SPEED BASED ON STATS
@@ -215,6 +222,8 @@ public class Player{
 
         //collision box
         player_bounds = new Rectangle(character.getX(), character.getY(), COLLISION_WIDTH, COLLISION_HEIGHT);
+
+        hitbox.setPosition(player_bounds.getX() - 5 , player_bounds.getY() + 3);
 
         //line of sight
         line_of_sight = new Rectangle(character.getX() - (LOS_WIDTH / 2), character.getY() - (LOS_HEIGHT / 2), LOS_WIDTH, LOS_HEIGHT);

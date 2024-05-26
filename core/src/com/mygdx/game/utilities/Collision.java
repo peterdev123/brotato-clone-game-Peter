@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.enemies.Enemies;
 import com.mygdx.game.enemies.Zombie1;
 import com.mygdx.game.main.Map;
+import com.mygdx.game.player.Player;
 import com.mygdx.game.weapons.Projectile;
 
 import java.util.ArrayList;
@@ -105,4 +106,14 @@ public class Collision {
         }
     }
 
+    public boolean playerEnemyCollision(Player player, ArrayList<Enemies> enemies) {
+        for (Enemies enemy : enemies) {
+            if (Intersector.overlaps(player.getPlayerHitbox(), enemy.getEnemyHitbox())) {
+                player.decreaseHealth(enemy.getAttackPower());
+                System.out.println("Player collided with Enemy! Health: " + player.getCurrentHealth());
+                return true;  // Return true immediately after detecting a collision
+            }
+        }
+        return false;
+    }
 }

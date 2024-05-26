@@ -149,6 +149,9 @@ public class EnemyHandler {
                 spriteBatch.draw(zombie, enemy.getPosition().x, enemy.getPosition().y, enemy.getSize().x, enemy.getSize().y);
             }
         }
+
+        handlePlayerCollisions();
+
         spriteBatch.end();
         shapeRenderer.end();
     }
@@ -206,5 +209,16 @@ public class EnemyHandler {
 
         random_position.set(random_x, random_y);
         return random_position;
+    }
+
+    public boolean handlePlayerCollisions() {
+        for (Enemies enemy : enemies) {
+            if (enemyCollision.playerEnemyCollision(player, enemies)) {
+                enemy.attack();
+                System.out.println("Player Health: " + player.getCurrentHealth());
+                return true;
+            }
+        }
+        return false;
     }
 }

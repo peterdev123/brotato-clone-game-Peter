@@ -14,7 +14,7 @@ public class Zombie2 extends Enemies {
 
     public Zombie2(int health, Texture enemy_texture, Vector2 position) {
         super("Zombie 2", health, 5, 1, 50, position, new Vector2(48, 48),
-                new Rectangle(position.x + 10, position.y + 10, new Vector2(45, 45).x - 20, new Vector2(45, 45).y - 20), 1);  // Initializing with default values, can be modified
+                new Rectangle(position.x + 10, position.y + 10, new Vector2(45, 45).x - 25, new Vector2(45, 45).y - 25), 1);  // Initializing with default values, can be modified
         this.enemy_texture = enemy_texture;
 //        this.position = position;
 //        this.size = new Vector2(45, 45);
