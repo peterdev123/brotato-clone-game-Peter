@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import Menu.Menu;
+import MySql.CreateTable;
 //import com.mygdx.game.main.Menu;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ public class DesktopLauncher {
 //		config.setResizable(true);
 //		new Lwjgl3Application(new TitleFight(), config);
 		// Start of the Main Menu
+
 		SwingUtilities.invokeLater(() -> {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

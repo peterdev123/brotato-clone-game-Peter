@@ -31,10 +31,13 @@ public class Player{
 
     private Weapon weaponHandler;
 
+
+
     //Player Attributes
     private float maxHealth;
     private float health;
     private int armor;
+    private int dodge;
     public static float damage_multiplier;
 
     //Player Prerequisites
@@ -65,7 +68,11 @@ public class Player{
     private ShapeRenderer shapeRendererCollision;
     private ShapeRenderer shapeRendererLOS;
 
+    // Stats
     private Intermession intermessionData;
+
+    //Score
+    public static int totalScore;
 
     public Player(Intermession intermessionData){
         this.intermessionData = intermessionData;
@@ -77,6 +84,7 @@ public class Player{
         speed = 55 * 2;
         isMoving = false;
         isMovingLeft = false;
+        totalScore = 0;
 
         collision = new Collision();
         player_bounds = new Rectangle(playerDrawX, playerDrawY, COLLISION_WIDTH, COLLISION_HEIGHT);
@@ -113,34 +121,54 @@ public class Player{
 
     //SET HP BASED ON STATS
     private void setHealth() {
-        health = health + (intermessionData.getHpData() * 2);
+        health = 30 + (intermessionData.getHpData() * 2);
         if (health > maxHealth) {
             maxHealth = health;
         }
 
+        if (health == 48) {
+            health = 50;
+        }
     }
 
 
 
     //SET ARMOR BASED ON STATS
     private void setArmor() {
+
         armor = intermessionData.getArmorData();
     }
 
+    public float getArmorPercentage() {
+        return (float) armor / 25;
+    }
+
+    private void setDodge() {
+        this.dodge = intermessionData.getDodgeData();
+    }
+
+    public int getDodge() {
+        return dodge * 4;
+    }
     //DEBUG
 //    private void showStats() {
 //        System.out.print(health + " " + damage_multiplier + " " + speed + " " + armor);
 //        System.out.println();
 //    }
+    public void resetHealth(){
+        this.health = maxHealth;
 
+    }
     //SET DAMAGE BASED ON STATS
     private void setDamage_multiplier() {
         damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
     }
+
     public void updatePlayerStats(){
         setSpeed();
         setHealth();
         setArmor();
+        setDodge();
         setDamage_multiplier();
     }
     public void handleMovement(OrthographicCamera camera){
@@ -160,7 +188,9 @@ public class Player{
 //        shapeRendererCollision.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
 //        shapeRendererCollision.end();
 
-        collision.playerCollision(player_bounds, character);
+        collision.setPlayerBound(player_bounds);
+        collision.setCharacter(character);
+        collision.run();
 
         isMovingLeft = checkDirectionFacing(camera);
 

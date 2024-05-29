@@ -2,7 +2,6 @@ package com.mygdx.game.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.main.World;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
@@ -39,16 +39,21 @@ public class Weapon{
     //GUNSHOT CLIP
     private Clip clipShot;
 
+    //RUMBLE
+    private Rumble rumble;
+
+
     public Weapon(Player player){
         this.player_reference = player;
-        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR2.png"));
+        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
-
         collision = new Collision();
 
         damage = 10;
         fire_rate = 1;
+
+        rumble = new Rumble();
 
         rand = new Random();
         loadGunShotClip("assets/Audio/Menu/Buttons/HoverBeep.wav");
@@ -134,7 +139,7 @@ public class Weapon{
             if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                 Vector2 direction = new Vector2(unprojectedPosition.x - char_x, unprojectedPosition.y - char_y - 10).nor();
                 projectiles.add(new Projectile(new Vector2(char_x, char_y), direction, angle));
-                Rumble.rumble(2, .2f);
+                rumble.rumble(2, .2f);
                 playGunShotClip();
             }
 
@@ -164,7 +169,7 @@ public class Weapon{
             if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                 Vector2 direction = new Vector2(unprojectedPosition.x - char_x, unprojectedPosition.y - char_y - 10).nor();
                 projectiles.add(new Projectile(new Vector2(char_x, char_y), direction, angle));
-                Rumble.rumble(2, .2f);
+                rumble.rumble(2, .2f);
                 playGunShotClip();
             }
 
@@ -201,9 +206,10 @@ public class Weapon{
 //                shapeRenderer.end();
             }
         }
-        if (Rumble.getRumbleTimeLeft() > 0){
-            Rumble.tick(Gdx.graphics.getDeltaTime());
-            camera.translate(Rumble.getPos());
+        if (rumble.getRumbleTimeLeft() > 0){
+            rumble.setDelta(Gdx.graphics.getDeltaTime());
+            rumble.run();
+            camera.translate(rumble.getPos());
         }
     }
 

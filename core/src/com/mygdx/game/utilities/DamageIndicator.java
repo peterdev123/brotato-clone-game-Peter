@@ -7,24 +7,28 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.player.Player;
 
-
-public class DamageIndicator {
+public class DamageIndicator extends Thread {
     private Vector2 position;
     private int damage;
     private long creationTime;
     private static final long DURATION = 500; // Duration in milliseconds
     private BitmapFont font;
+    private float damageMultiplier;
+    private SpriteBatch batch;
 
-    private float damage_multiplier;
-
-    public DamageIndicator(Vector2 position, int base_damage, int damage){
+    public DamageIndicator(Vector2 position, int baseDamage, int damage) {
         this.position = new Vector2(position);
         this.damage = damage;
         this.creationTime = TimeUtils.millis();
         this.font = new BitmapFont();
         this.font.getData().setScale(0.5f);
         this.font.setColor(Color.WHITE);
-        checkCrit(base_damage, damage);
+        checkCrit(baseDamage, damage);
+    }
+
+    @Override
+    public void run() {
+        render(this.batch);
     }
 
     public boolean isExpired() {
@@ -32,7 +36,7 @@ public class DamageIndicator {
     }
 
     public void setDamageMultiplier() {
-        this.damage_multiplier = Player.damage_multiplier;
+        this.damageMultiplier = Player.damage_multiplier;
     }
 
     public void render(SpriteBatch batch) {
@@ -43,13 +47,18 @@ public class DamageIndicator {
 
     public void checkCrit(int base_damage, int damage_dealt){
         setDamageMultiplier();
-        if(damage_dealt >= ((base_damage * damage_multiplier) + 3)){
+        if(damage_dealt >= ((base_damage * damageMultiplier) + 3)){
             this.font.getData().setScale(0.7f);
             this.font.setColor(Color.RED);
         }
+        Player.totalScore += damage_dealt;
     }
 
     public void dispose() {
         font.dispose();
+    }
+
+    public void setBatch(SpriteBatch batch) {
+        this.batch = batch;
     }
 }

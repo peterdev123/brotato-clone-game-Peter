@@ -9,7 +9,7 @@ import com.mygdx.game.utilities.Animator;
 public abstract class Enemies {
 
     private int health;
-    private int attackPower;
+    private float attackPower;
     private int defense;
     private int speed;
     private String name;
@@ -20,7 +20,7 @@ public abstract class Enemies {
     private int zombie_number;
     private Animator animator;
 
-    public Enemies(String name, int health, int attackPower, int defense, int speed, Vector2 position, Vector2 size, Rectangle hitbox, int zombie_number) {
+    public Enemies(String name, int health, float attackPower, int defense, int speed, Vector2 position, Vector2 size, Rectangle hitbox, int zombie_number) {
         //Initializing stats
         this.name = name;
         this.health = health;
@@ -81,7 +81,7 @@ public abstract class Enemies {
         this.health = health;
     }
 
-    public int getAttackPower() {
+    public float getAttackPower() {
         return attackPower;
     }
 

@@ -18,6 +18,7 @@ import com.mygdx.game.weapons.Projectile;
 import com.mygdx.game.weapons.Weapon;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class EnemyHandler {
@@ -40,6 +41,7 @@ public class EnemyHandler {
     private Array<Projectile> projectiles;
     private ShapeRenderer shapeRenderer;
     private Collision enemyCollision;
+    private Thread enemyCollisionThread;
     private Weapon weapon;
     private Player player;
 
@@ -80,7 +82,7 @@ public class EnemyHandler {
         zombie_3_run_inverse = new Texture(Gdx.files.internal("animations/zombie_3/zombie_3_run_inversed.png"));
 
         // DEBUGGING
-        spawnEnemies();
+//        spawnEnemies();
         this.weapon = weapon;
         projectiles = weapon.getProjectiles();
         shapeRenderer = new ShapeRenderer();
@@ -98,14 +100,20 @@ public class EnemyHandler {
         }
     }
 
-    public void handleWave(OrthographicCamera camera) {
+    public void handleWave(OrthographicCamera camera, int waveTimer) {
         spriteBatch.begin();
         stateTime += Gdx.graphics.getDeltaTime() * 0.45f;
 
         // DEBUGGING
         if (TimeUtils.timeSinceMillis(lastSpawnTime) >= SPAWN_INTERVAL) {
-            spawnEnemies();
-            lastSpawnTime = TimeUtils.millis();
+            if (waveTimer != 30) {
+                spawnEnemies();
+                lastSpawnTime = TimeUtils.millis();
+            }
+        }
+
+        if (waveTimer == 0) {
+            enemies.clear();  // Clear the entire list safely
         }
 
         // CHECK ZOMBIE TAKING DAMAGE OR DEAD
@@ -116,12 +124,13 @@ public class EnemyHandler {
         }
 
         // HANDLES DEAD ENEMIES
+        List<Enemies> deadEnemies = new ArrayList<>(); // Temporary list to store dead enemies
         for(Enemies enemy: enemies){ // Iterate over Enemies, not Zombie1
             if(!enemy.isAlive()){
-                dead_enemies.add(enemy);
+                deadEnemies.add(enemy); // Add dead enemies to the temporary list
             }
         }
-        handleDeadEnemies();
+        handleDeadEnemies(deadEnemies); // Pass the list to handleDeadEnemies method
 
         //DEBUGGING
         handleEnemyMovement();
@@ -182,10 +191,10 @@ public class EnemyHandler {
             Enemies enemy;
             switch (type) {
                 case 1:
-                    enemy = new Zombie2((int) (25 * hpPercentage), zombieTextures[type], rand());
+                    enemy = new Zombie2((int) (23 * hpPercentage), zombieTextures[type], rand());
                     break;
                 case 2:
-                    enemy = new Zombie3((int) (30 * hpPercentage), zombieTextures[type], rand());
+                    enemy = new Zombie3((int) (25 * hpPercentage), zombieTextures[type], rand());
                     break;
                 default:
                     enemy = new Zombie1((int) (20 * hpPercentage), zombieTextures[type], rand());
@@ -196,10 +205,8 @@ public class EnemyHandler {
     }
 
     // REMOVES THE ENEMIES FROM ARRAYLIST WHEN ISALIVE IS FALSE
-    private void handleDeadEnemies() {
-        for(Enemies dead_enemy: dead_enemies){
-            enemies.remove(dead_enemy);
-        }
+    private void handleDeadEnemies(List<Enemies> deadEnemies) {
+        enemies.removeAll(deadEnemies); // Safely remove all dead enemies from the enemies list
     }
 
     private Vector2 rand() {

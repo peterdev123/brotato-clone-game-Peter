@@ -4,22 +4,32 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.Random;
 
-public class Rumble {
-    private static float time = 0;
-    private static float currentTime = 0;
-    private static float power = 0;
-    private static float currentPower = 0;
-    private static Random random;
-    private static Vector3 pos = new Vector3();
+public class Rumble extends Thread{
+    private float time = 0;
+    private float currentTime = 0;
+    private float power = 0;
+    private float currentPower = 0;
+    private float delta;
+    private Random random;
+    private Vector3 pos = new Vector3();
 
-    public static void rumble(float rumblePower, float rumbleLength) {
+    public void rumble(float rumblePower, float rumbleLength) {
         random = new Random();
         power = rumblePower;
         time = rumbleLength;
         currentTime = 0;
     }
 
-    public static Vector3 tick(float delta) {
+    @Override
+    public void run() {
+        tick();
+    }
+
+    public void setDelta(float delta) {
+        this.delta = delta;
+    }
+
+    public void tick() {
         if (currentTime <= time) {
             currentPower = power * ((time - currentTime) / time);
 
@@ -30,14 +40,13 @@ public class Rumble {
         } else {
             time = 0;
         }
-        return pos;
     }
 
-    public static float getRumbleTimeLeft() {
+    public float getRumbleTimeLeft() {
         return time;
     }
 
-    public static Vector3 getPos() {
+    public Vector3 getPos() {
         return pos;
     }
 }

@@ -11,12 +11,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Screens.GameOver;
+import com.mygdx.game.Screens.Leaderboard;
 import com.mygdx.game.Screens.Pause;
 import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
+//import com.mygdx.game.utilities.HeadStart;
+import com.mygdx.game.utilities.ResetRunnable;
 import com.mygdx.game.utilities.WaveHandler;
 
 import javax.sound.sampled.*;
@@ -35,8 +38,9 @@ public class World implements Screen {
     private Texture hpbarTexture;
     private Sprite hpbarSprite;
     private float hpbarWidth;
+    private final float max_hpbarwidth;
     private final float hpbarHeight;
-
+    private float hpPercentage;
     private final float CAMERA_SPEED = 150.0f;
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
@@ -48,6 +52,10 @@ public class World implements Screen {
     private boolean intermissionScreenShown = false;
     private Intermession intermissionScreen;
 
+
+    // GAMEOVER
+    private boolean gameOverScreenShown = false;
+    private GameOver gameOver;
     // Pause
     public boolean gamePaused = false;
     private Pause pauseScreen;
@@ -59,24 +67,40 @@ public class World implements Screen {
     private WaveHandler waveTimerThread;
 //    private int currentWave = 1;
 //    private float waveTimer = 30; // Duration of each wave in seconds
+
+    //Text
     private BitmapFont font;
+
+    //Boolean for game done
+    private boolean gameDone;
+
+    //For leaderboard
+    private Leaderboard leaderboard;
 
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
         map = new Map();
+
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
         hpbarTexture = new Texture("assets/Extras/hpbar2.png");
         hpbarSprite = new Sprite(hpbarTexture);
         hpbarWidth = hpbarSprite.getWidth();
+        max_hpbarwidth = hpbarSprite.getWidth();
         hpbarHeight = hpbarSprite.getHeight();
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
+        gameOver = new GameOver(this);
 
+        // Start wave
         waveTimerThread = new WaveHandler();
         waveTimerThread.start();
+
+        this.gameDone = false;
+        leaderboard = new Leaderboard(this);
+
 
         // ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon(), player);
@@ -120,6 +144,8 @@ public class World implements Screen {
         }
     }
 
+
+
     private void stopBackgroundMusic0() {
         if (bgclip0 != null && bgclip0.isRunning()) {
             bgclip0.stop();
@@ -129,9 +155,14 @@ public class World implements Screen {
 
     @Override
     public void render(float delta) {
+        System.out.println(Player.totalScore);
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        if (gameDone) {
+            leaderboard.render(delta);
+            return;
+        }
         // DEBUG: Render the intermission screen when true
         if (intermissionScreenShown) {
             intermissionScreen.render(delta);
@@ -143,6 +174,8 @@ public class World implements Screen {
                 intermissionScreen.hide();
                 player.updatePlayerStats();
             }
+
+
             return; // Stop rendering the game world if the intermission screen is shown
         }
 
@@ -151,12 +184,30 @@ public class World implements Screen {
             pauseScreen.render(delta);
             pauseScreen.setGamePaused(gamePaused);
             return;
+        }else{
+            pauseScreen.stopGameOverMusic();
+        }
+
+        // GAME OVER SCREEN
+        if(gameOverScreenShown){
+            gameOver.render(delta);
+            gameOver.setGameOver(gameOverScreenShown);
+            return;
+        }
+
+        // GAMEOVER DEBUG
+        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+            gameOverScreenShown = true;
+            waveTimerThread.pauseTimer();
+            gameOver.show();
+            stopBackgroundMusic0();
         }
 
         // Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             gamePaused = true;
             waveTimerThread.pauseTimer();
+            pauseScreen.show();
             stopBackgroundMusic0();
         }
 
@@ -170,6 +221,14 @@ public class World implements Screen {
 
         if (!gamePaused) {
             waveTimerThread.resumeTimer();
+        }
+
+        // GAME OVER
+        if (player.getHealthPercentage() == 0) {
+            gameOverScreenShown = true;
+            waveTimerThread.pauseTimer();
+            gameOver.show();
+            stopBackgroundMusic0();
         }
 
         //Class
@@ -186,13 +245,16 @@ public class World implements Screen {
         int currentWave = waveTimerThread.getCurrentWave();
         int waveTimer = waveTimerThread.getWaveTimer();
 
-        if (waveTimer == 0) {
-            intermissionScreen.setStatPoints(2);
-            showIntermissionScreen();
-            waveTimerThread.setWaveTimer(30);
-            waveTimerThread.setWave(1);
-            enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
-        }
+        checkWave(waveTimer);
+
+//        if (waveTimer == 0) {
+//            intermissionScreen.setStatPoints(2);
+//            showIntermissionScreen();
+////            waveTimerThread.setHeadStart();
+//            waveTimerThread.setWaveTimer(30);
+//            waveTimerThread.setWave(1);
+//            enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
+//        }
 
         zoom(); // Call zoom to adjust zoom level if keys are pressed
 
@@ -205,7 +267,7 @@ public class World implements Screen {
         player.handleMovement(camera);
 
         // ENEMIES: DEBUGGING
-        enemyHandler.handleWave(camera);
+        enemyHandler.handleWave(camera, waveTimer);
 
         renderer.render(new int[]{2});
 
@@ -243,30 +305,43 @@ public class World implements Screen {
 //        player.handleMovement(camera);
         spriteBatch.begin();
         // PRA HP HEALTH PANGUTANA LNG NKO PRA UPDATE2 NIYA KY LIBOG JD KUN E REDRAW NA SIYA NGA MAGBASE SA PLAYER HP
-        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
-            hpbarWidth -= 100;
-            player.decreaseHealth(10);
-            System.out.println("player health percentage: " + player.getHealthPercentage());
+
+        String timerText;
+
+        if (waveTimer == 30) {
+            timerText = "They are coming!";
+        }else {
+            timerText = "Wave " + currentWave + ": " + (int) waveTimer;
         }
+
+        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 180, Gdx.graphics.getHeight() - 50);
+
+        // Draw the HP bar at the top left corner
+
+//        updateHp();
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             hpbarWidth += 100;
             player.increaseHealth(10);
-            System.out.println("player health percentage: " + player.getHealthPercentage());
+//            System.out.println("player health percentage: " + player.getHealthPercentage());
             if (hpbarWidth < 0) {
                 hpbarWidth = 0;
             }
         }
-
-        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
-        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
-
-        // Draw the HP bar at the top left corner
-        hpbarSprite.setSize(hpbarWidth, hpbarHeight);
+        if (enemyHandler.handlePlayerCollisions()) {
+            hpbarWidth -= 100;
+            if (hpbarWidth < 0) {
+                hpbarWidth = 0; // Ensure HP bar width doesn't go below zero
+            }
+        }
+        hpbarWidth = max_hpbarwidth;
+        hpPercentage = player.getHealthPercentage();
+        float newHpBarWidth = hpbarWidth * hpPercentage;
+        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
         hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
         hpbarSprite.draw(spriteBatch);
 
         // Draw current health and total health text
-        String healthText = player.getCurrentHealth() + "/" + player.getMaxHealth();
+        String healthText = String.format("%.2f",player.getCurrentHealth()) + "/" + String.format("%.0f", Math.ceil(player.getMaxHealth()));
         font.draw(spriteBatch, healthText, 20, Gdx.graphics.getHeight() - hpbarHeight - 30);
         spriteBatch.end();
         // ENEMIES: DEBUGGING
@@ -274,6 +349,19 @@ public class World implements Screen {
 //        enemyHandler.handleWave(camera);
 //
 //        renderer.render(new int[]{2});
+    }
+
+    public void checkWave(int waveTimer) {
+        if (waveTimer == 0) {
+            showIntermissionScreen();
+            ResetRunnable resetRunnable = new ResetRunnable(waveTimerThread, enemyHandler, intermissionScreen);
+            Thread resetThread = new Thread(resetRunnable);
+            resetThread.start();
+        }
+    }
+
+    public void setGameDone() {
+        gameDone = true;
     }
 
     public void zoom() {
@@ -285,6 +373,32 @@ public class World implements Screen {
         }
     }
 
+//    private void updateHp(){
+//
+//        spriteBatch.begin();
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+//            hpbarWidth += 100;
+//            player.increaseHealth(10);
+//            System.out.println("player health percentage: " + player.getHealthPercentage());
+//            if (hpbarWidth < 0) {
+//                hpbarWidth = 0;
+//            }
+//        }
+//        if (enemyHandler.handlePlayerCollisions()) {
+//            hpbarWidth -= 100;
+//            if (hpbarWidth < 0) {
+//                hpbarWidth = 0; // Ensure HP bar width doesn't go below zero
+//            }
+//        }
+//
+//        float healthPercentage = player.getHealthPercentage();
+//        float newHpBarWidth = hpbarWidth * healthPercentage;
+//        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
+//        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+//        hpbarSprite.draw(spriteBatch);
+//        spriteBatch.end();
+//    }
+
     @Override
     public void resize(int width, int height) {
         camera.viewportWidth = VIRTUAL_WIDTH;
@@ -295,13 +409,28 @@ public class World implements Screen {
 
     public void showIntermissionScreen() {
         stopBackgroundMusic0();
+        player.resetHealth();
         intermissionScreenShown = true;
         waveTimerThread.pauseTimer();
         intermissionScreen.show();
+
+    }
+
+    public void resetAll(){
+        intermissionScreen.resetAllStatsBackToNormal();
+        titleFight.create();
+
     }
 
     public void hideIntermissionScreen() {
         intermissionScreenShown = false;
+        spriteBatch.begin();
+        float healthPercentage = player.getHealthPercentage();
+        float newHpBarWidth = hpbarWidth * healthPercentage;
+        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
+        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+        hpbarSprite.draw(spriteBatch);
+        spriteBatch.end();
         waveTimerThread.resumeTimer();
     }
 
@@ -322,10 +451,49 @@ public class World implements Screen {
 
     @Override
     public void dispose() {
-        renderer.dispose();
-        font.dispose();
-        spriteBatch.dispose(); // Don't forget to dispose the spriteBatch
+        // Dispose renderer
+        if (renderer != null) {
+            renderer.dispose();
+        }
+
+        // Dispose font
+        if (font != null) {
+            font.dispose();
+        }
+
+        // Dispose sprite batch
+        if (spriteBatch != null) {
+            spriteBatch.dispose();
+        }
+
+        // Dispose textures and sprites
+        if (hpbarTexture != null) {
+            hpbarTexture.dispose();
+        }
+
+        if (character.getTexture() != null) {
+            character.getTexture().dispose();
+        }
+
+        // Dispose intermission screen resources
+        if (intermissionScreen != null) {
+            intermissionScreen.dispose();
+        }
+
+        // Dispose game over screen resources
+        if (gameOver != null) {
+            gameOver.dispose();
+        }
+
+        // Dispose pause screen resources
+        if (pauseScreen != null) {
+            pauseScreen.dispose();
+        }
+
+        // Stop and dispose of background music
+        stopBackgroundMusic0();
     }
+
 
 
 }
